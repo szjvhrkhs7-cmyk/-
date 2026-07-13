@@ -77,7 +77,7 @@
     </section>
 
     <section id="analyticsView" class="view">
-      <div class="analytics-header"><span class="eyebrow">Обзор расходов</span><h1>Аналитика</h1><p>Показывает, куда уходит бюджет и как меняются траты со временем.</p></div>
+      <div class="analytics-header"><span class="eyebrow">Обзор расходов</span><h1>Аналитика</h1><p>Показывает фактические и планируемые траты по категориям.</p></div>
       <div class="period-switch" role="group" aria-label="Период аналитики">
         <button class="period active" data-period="month" type="button">Месяц</button>
         <button class="period" data-period="quarter" type="button">3 месяца</button>
@@ -85,9 +85,11 @@
         <button class="period" data-period="year" type="button">Год</button>
       </div>
       <div class="metric"><div><span>Всего потрачено</span><small>за выбранный период</small></div><strong id="analyticsTotal">0 ₽</strong></div>
+      <div class="metric"><div><span>Планируемые траты</span><small>текущий план без привязки к периоду</small></div><strong id="plannedAnalyticsTotal">0 ₽</strong></div>
       <div class="analytics-grid">
-        <article class="card"><div class="card-heading"><span class="chart-icon">◒</span><h2>По категориям</h2></div><div id="categoryChart" class="bars"></div></article>
-        <article class="card"><div class="card-heading"><span class="chart-icon">⌁</span><h2>Динамика</h2></div><div id="monthChart" class="bars"></div></article>
+        <article class="card"><div class="card-heading"><span class="chart-icon">◒</span><h2>Фактические по категориям</h2></div><div id="categoryChart" class="bars"></div></article>
+        <article class="card"><div class="card-heading"><span class="chart-icon">⌁</span><h2>Динамика фактических трат</h2></div><div id="monthChart" class="bars"></div></article>
+        <article class="card"><div class="card-heading"><span class="chart-icon">◎</span><h2>План по категориям</h2></div><div id="plannedCategoryChart" class="bars"></div></article>
       </div>
     </section>
 
