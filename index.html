@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -36,6 +36,19 @@
         <strong id="heroTotal" class="hero-total">0 ₽</strong>
         <div class="hero-caption"><span class="pulse-dot"></span>Обновляется после каждой записи</div>
       </div>
+
+      <section class="planned-section" aria-labelledby="plannedTitle">
+        <div class="section-heading planned-heading">
+          <div><span class="eyebrow">Бюджет</span><h2 id="plannedTitle">Планируемые траты</h2></div>
+          <button id="addPlannedRowButton" class="add-category" type="button">+ строка</button>
+        </div>
+        <p class="section-description">Добавляйте любые будущие категории и суммы. Изменения сохраняются автоматически.</p>
+        <div class="planned-card">
+          <div class="planned-table-header"><span>Категория</span><span>Сумма</span><span class="sr-only">Действия</span></div>
+          <div id="plannedRows" class="planned-rows"></div>
+          <div class="planned-total"><span>Итог</span><strong id="plannedTotal">0 ₽</strong></div>
+        </div>
+      </section>
 
       <form id="expenseForm" class="quick-add">
         <div class="quick-add-title">
