@@ -90,6 +90,12 @@ function renderExpenses() {
   $('#emptyExpenses').classList.toggle('hidden', expenses.length > 0);
 }
 
+function normalizedPlannedExpenses() {
+  return state.plannedExpenses
+    .map((item) => ({ category: item.category.trim() || 'Без категории', amount: normalizeAmount(item.amount) || 0 }))
+    .filter((item) => item.amount > 0);
+}
+
 function renderPlannedExpenses() {
   const container = $('#plannedRows');
   if (!state.plannedExpenses.length) {
@@ -101,13 +107,12 @@ function renderPlannedExpenses() {
       row.dataset.id = item.id;
       row.innerHTML = `
         <input class="planned-category" value="${escapeHtml(item.category)}" maxlength="50" aria-label="Категория планируемой траты" placeholder="Название категории">
-        <div class="planned-money"><input class="planned-amount" value="${item.amount || ''}" inputmode="decimal" aria-label="Сумма планируемой траты" placeholder="0"><span>₽</span></div>
+        <div class="planned-money"><input class="planned-amount" value="${escapeHtml(item.amount || '')}" inputmode="decimal" aria-label="Сумма планируемой траты" placeholder="0"><span>₽</span></div>
         <button class="delete-planned" type="button" aria-label="Удалить планируемую трату">×</button>`;
       return row;
     }));
   }
-  const total = totalExpenses(state.plannedExpenses.map((item) => ({ amount: normalizeAmount(item.amount) || 0 })));
-  $('#plannedTotal').textContent = money.format(total);
+  $('#plannedTotal').textContent = money.format(totalExpenses(normalizedPlannedExpenses()));
 }
 
 function addPlannedRow() {
@@ -115,6 +120,7 @@ function addPlannedRow() {
   state.plannedExpenses.push(item);
   saveState();
   renderPlannedExpenses();
+  renderAnalytics();
   requestAnimationFrame(() => {
     const input = document.querySelector(`.planned-row[data-id="${item.id}"] .planned-category`);
     input?.focus({ preventScroll: true });
@@ -127,25 +133,29 @@ function updatePlannedRow(row) {
   item.category = row.querySelector('.planned-category').value.trimStart();
   item.amount = row.querySelector('.planned-amount').value;
   saveState();
-  const total = totalExpenses(state.plannedExpenses.map((entry) => ({ amount: normalizeAmount(entry.amount) || 0 })));
-  $('#plannedTotal').textContent = money.format(total);
+  $('#plannedTotal').textContent = money.format(totalExpenses(normalizedPlannedExpenses()));
+  renderAnalytics();
 }
 
 function renderAnalytics() {
   const reference = new Date();
   const expenses = filterExpenses(state.expenses, reference, PERIOD_MONTHS[analyticsPeriod]);
+  const planned = normalizedPlannedExpenses();
   $('#analyticsTotal').textContent = money.format(totalExpenses(expenses));
+  $('#plannedAnalyticsTotal').textContent = money.format(totalExpenses(planned));
   renderBars('#categoryChart', groupByCategory(expenses), (key) => key);
   renderBars('#monthChart', groupByMonth(expenses), (key) => monthName.format(new Date(`${key}-01T12:00:00`)), true);
+  renderBars('#plannedCategoryChart', groupByCategory(planned), (key) => key, false, 'Добавьте суммы в планируемые траты, чтобы увидеть их здесь.');
 }
 
-function renderBars(selector, grouped, labelFormatter, chronological = false) {
+function renderBars(selector, grouped, labelFormatter, chronological = false, emptyText = 'Добавьте расходы, чтобы увидеть аналитику.') {
   const container = $(selector);
+  if (!container) return;
   let entries = Object.entries(grouped);
   entries.sort(chronological ? ([a], [b]) => a.localeCompare(b) : ([, a], [, b]) => b - a);
   const maximum = Math.max(...entries.map(([, value]) => value), 1);
   if (!entries.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">⌁</div><strong>Недостаточно данных</strong><span>Добавьте расходы, чтобы увидеть аналитику.</span></div>';
+    container.innerHTML = `<div class="empty"><div class="empty-icon">⌁</div><strong>Недостаточно данных</strong><span>${escapeHtml(emptyText)}</span></div>`;
     return;
   }
   container.replaceChildren(...entries.map(([key, value]) => {
@@ -193,6 +203,7 @@ $('#plannedRows').addEventListener('focusout', (event) => {
   const item = state.plannedExpenses.find((entry) => entry.id === row.dataset.id);
   if (item) item.category = item.category.trim();
   saveState();
+  renderAnalytics();
 });
 $('#plannedRows').addEventListener('click', (event) => {
   const button = event.target.closest('.delete-planned');
@@ -201,6 +212,7 @@ $('#plannedRows').addEventListener('click', (event) => {
   state.plannedExpenses = state.plannedExpenses.filter((item) => item.id !== row.dataset.id);
   saveState();
   renderPlannedExpenses();
+  renderAnalytics();
 });
 
 monthPicker.addEventListener('change', renderExpenses);
