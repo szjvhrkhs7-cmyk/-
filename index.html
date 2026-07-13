@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Кошелёк">
+  <meta name="description" content="Персональный учёт и аналитика расходов">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <title>Кошелёк</title>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><img src="icon.svg" alt=""><div><strong>Кошелёк</strong><span>личные расходы</span></div></div>
+    <button id="installButton" class="ghost hidden" type="button">Установить</button>
+  </header>
+
+  <main>
+    <nav class="tabs" aria-label="Разделы приложения">
+      <button class="tab active" data-view="expenses" type="button">Расходы</button>
+      <button class="tab" data-view="analytics" type="button">Аналитика</button>
+      <button class="tab" data-view="settings" type="button">Данные</button>
+    </nav>
+
+    <section id="expensesView" class="view active">
+      <div class="toolbar">
+        <label>Месяц<input id="monthPicker" type="month"></label>
+        <button id="addCategoryButton" class="secondary" type="button">+ Категория</button>
+      </div>
+      <form id="expenseForm" class="expense-form">
+        <label>Категория<select id="categorySelect" required></select></label>
+        <label>Сумма<input id="amountInput" inputmode="decimal" placeholder="0,00" required></label>
+        <label>Дата<input id="dateInput" type="date" required></label>
+        <button class="primary" type="submit">Добавить</button>
+      </form>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Категория</th><th>Дата</th><th class="amount">Сумма</th><th><span class="sr-only">Действия</span></th></tr></thead>
+          <tbody id="expenseRows"></tbody>
+          <tfoot><tr><td colspan="2">Итог</td><td id="monthTotal" class="amount">0 ₽</td><td></td></tr></tfoot>
+        </table>
+        <div id="emptyExpenses" class="empty hidden">В этом месяце расходов пока нет.</div>
+      </div>
+    </section>
+
+    <section id="analyticsView" class="view">
+      <div class="period-switch" role="group" aria-label="Период аналитики">
+        <button class="period active" data-period="month" type="button">Месяц</button>
+        <button class="period" data-period="quarter" type="button">3 месяца</button>
+        <button class="period" data-period="halfYear" type="button">Полгода</button>
+        <button class="period" data-period="year" type="button">Год</button>
+      </div>
+      <div class="metric"><span>Всего потрачено</span><strong id="analyticsTotal">0 ₽</strong></div>
+      <div class="analytics-grid">
+        <article class="card"><h2>По категориям</h2><div id="categoryChart" class="bars"></div></article>
+        <article class="card"><h2>Динамика</h2><div id="monthChart" class="bars"></div></article>
+      </div>
+    </section>
+
+    <section id="settingsView" class="view">
+      <article class="card settings-card">
+        <h2>Резервная копия</h2>
+        <p>Данные хранятся только на этом устройстве. Экспортируйте копию перед очисткой Safari или сменой телефона.</p>
+        <div class="settings-actions">
+          <button id="exportButton" class="secondary" type="button">Экспорт JSON</button>
+          <label class="file-button">Импорт JSON<input id="importInput" type="file" accept="application/json"></label>
+          <button id="clearButton" class="danger" type="button">Удалить все данные</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="categoryDialog">
+    <form id="categoryForm" method="dialog">
+      <h2>Новая категория</h2>
+      <label>Название<input id="categoryNameInput" maxlength="40" autocomplete="off" required></label>
+      <div class="dialog-actions"><button value="cancel" class="ghost">Отмена</button><button value="default" class="primary">Создать</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
