@@ -1,0 +1,15 @@
+{
+  "name": "Кошелёк — учёт расходов",
+  "short_name": "Кошелёк",
+  "description": "Персональный учёт и аналитика расходов",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#111827",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
