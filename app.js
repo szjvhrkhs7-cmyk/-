@@ -55,15 +55,27 @@ function selectedMonthExpenses() {
     .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
 }
 
+function pluralizeEntries(count) {
+  const lastTwo = count % 100;
+  const last = count % 10;
+  if (lastTwo >= 11 && lastTwo <= 14) return `${count} записей`;
+  if (last === 1) return `${count} запись`;
+  if (last >= 2 && last <= 4) return `${count} записи`;
+  return `${count} записей`;
+}
+
 function renderExpenses() {
   const expenses = selectedMonthExpenses();
+  const total = totalExpenses(expenses);
   const rows = $('#expenseRows');
   rows.replaceChildren(...expenses.map((expense) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${escapeHtml(expense.category)}</td><td>${new Date(`${expense.date}T12:00:00`).toLocaleDateString('ru-RU')}</td><td class="amount">${money.format(expense.amount)}</td><td><button class="delete-row" type="button" aria-label="Удалить расход" data-id="${expense.id}">×</button></td>`;
     return tr;
   }));
-  $('#monthTotal').textContent = money.format(totalExpenses(expenses));
+  $('#monthTotal').textContent = money.format(total);
+  $('#heroTotal').textContent = money.format(total);
+  $('#expenseCounter').textContent = pluralizeEntries(expenses.length);
   $('#emptyExpenses').classList.toggle('hidden', expenses.length > 0);
 }
 
@@ -81,7 +93,7 @@ function renderBars(selector, grouped, labelFormatter, chronological = false) {
   entries.sort(chronological ? ([a], [b]) => a.localeCompare(b) : ([, a], [, b]) => b - a);
   const maximum = Math.max(...entries.map(([, value]) => value), 1);
   if (!entries.length) {
-    container.innerHTML = '<div class="empty">За этот период расходов нет.</div>';
+    container.innerHTML = '<div class="empty"><div class="empty-icon">⌁</div><strong>Недостаточно данных</strong><span>Добавьте расходы, чтобы увидеть аналитику.</span></div>';
     return;
   }
   container.replaceChildren(...entries.map(([key, value]) => {
@@ -137,6 +149,7 @@ document.querySelectorAll('.tab').forEach((button) => button.addEventListener('c
   document.querySelectorAll('.tab').forEach((item) => item.classList.toggle('active', item === button));
   document.querySelectorAll('.view').forEach((view) => view.classList.remove('active'));
   $(`#${button.dataset.view}View`).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (button.dataset.view === 'analytics') renderAnalytics();
 }));
 
