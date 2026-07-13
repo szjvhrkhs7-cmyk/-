@@ -1,0 +1,41 @@
+name: Deploy finance PWA to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build static site and iOS icons
+        run: |
+          mkdir dist
+          cp index.html styles.css app.js utils.js manifest.webmanifest sw.js icon.svg dist/
+          convert -background none icon.svg -resize 180x180 dist/apple-touch-icon.png
+          convert -background none icon.svg -resize 192x192 dist/icon-192.png
+          convert -background none icon.svg -resize 512x512 dist/icon-512.png
+          sed -i 's|href="icon.svg">|href="apple-touch-icon.png">|' dist/index.html
+          node -e "const fs=require('fs');const p='dist/manifest.webmanifest';const m=JSON.parse(fs.readFileSync(p));m.icons=[{src:'icon-192.png',sizes:'192x192',type:'image/png',purpose:'any'},{src:'icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}];fs.writeFileSync(p,JSON.stringify(m,null,2))"
+          sed -i "s|'./icon.svg'|'./icon.svg', './apple-touch-icon.png', './icon-192.png', './icon-512.png'|" dist/sw.js
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
