@@ -1,7 +1,11 @@
 import { PERIOD_MONTHS, filterExpenses, groupByCategory, groupByMonth, normalizeAmount, totalExpenses } from './utils.js';
 
 const STORAGE_KEY = 'koshelek-v1';
-const defaultState = { categories: ['Продукты', 'Транспорт', 'Дом', 'Здоровье', 'Развлечения'], expenses: [] };
+const defaultState = {
+  categories: ['Продукты', 'Транспорт', 'Дом', 'Здоровье', 'Развлечения'],
+  expenses: [],
+  plannedExpenses: []
+};
 let state = loadState();
 let analyticsPeriod = 'month';
 let deferredInstallPrompt = null;
@@ -19,7 +23,10 @@ function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!parsed || !Array.isArray(parsed.categories) || !Array.isArray(parsed.expenses)) return structuredClone(defaultState);
-    return parsed;
+    return {
+      ...parsed,
+      plannedExpenses: Array.isArray(parsed.plannedExpenses) ? parsed.plannedExpenses : []
+    };
   } catch {
     return structuredClone(defaultState);
   }
@@ -32,6 +39,10 @@ function saveState() {
 function currentMonth() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function createId() {
+  return typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 }
 
 function showToast(message) {
@@ -79,6 +90,47 @@ function renderExpenses() {
   $('#emptyExpenses').classList.toggle('hidden', expenses.length > 0);
 }
 
+function renderPlannedExpenses() {
+  const container = $('#plannedRows');
+  if (!state.plannedExpenses.length) {
+    container.innerHTML = '<div class="planned-empty">Нажмите «+ строка», чтобы добавить первую планируемую трату.</div>';
+  } else {
+    container.replaceChildren(...state.plannedExpenses.map((item) => {
+      const row = document.createElement('div');
+      row.className = 'planned-row';
+      row.dataset.id = item.id;
+      row.innerHTML = `
+        <input class="planned-category" value="${escapeHtml(item.category)}" maxlength="50" aria-label="Категория планируемой траты" placeholder="Название категории">
+        <div class="planned-money"><input class="planned-amount" value="${item.amount || ''}" inputmode="decimal" aria-label="Сумма планируемой траты" placeholder="0"><span>₽</span></div>
+        <button class="delete-planned" type="button" aria-label="Удалить планируемую трату">×</button>`;
+      return row;
+    }));
+  }
+  const total = totalExpenses(state.plannedExpenses.map((item) => ({ amount: normalizeAmount(item.amount) || 0 })));
+  $('#plannedTotal').textContent = money.format(total);
+}
+
+function addPlannedRow() {
+  const item = { id: createId(), category: '', amount: '' };
+  state.plannedExpenses.push(item);
+  saveState();
+  renderPlannedExpenses();
+  requestAnimationFrame(() => {
+    const input = document.querySelector(`.planned-row[data-id="${item.id}"] .planned-category`);
+    input?.focus({ preventScroll: true });
+  });
+}
+
+function updatePlannedRow(row) {
+  const item = state.plannedExpenses.find((entry) => entry.id === row.dataset.id);
+  if (!item) return;
+  item.category = row.querySelector('.planned-category').value.trimStart();
+  item.amount = row.querySelector('.planned-amount').value;
+  saveState();
+  const total = totalExpenses(state.plannedExpenses.map((entry) => ({ amount: normalizeAmount(entry.amount) || 0 })));
+  $('#plannedTotal').textContent = money.format(total);
+}
+
 function renderAnalytics() {
   const reference = new Date();
   const expenses = filterExpenses(state.expenses, reference, PERIOD_MONTHS[analyticsPeriod]);
@@ -112,7 +164,7 @@ $('#expenseForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const amount = normalizeAmount($('#amountInput').value);
   if (!amount) return showToast('Введите сумму больше нуля');
-  state.expenses.push({ id: crypto.randomUUID(), category: $('#categorySelect').value, amount, date: dateInput.value, createdAt: new Date().toISOString() });
+  state.expenses.push({ id: createId(), category: $('#categorySelect').value, amount, date: dateInput.value, createdAt: new Date().toISOString() });
   saveState();
   $('#amountInput').value = '';
   monthPicker.value = dateInput.value.slice(0, 7);
@@ -130,8 +182,29 @@ $('#expenseRows').addEventListener('click', (event) => {
   renderAnalytics();
 });
 
+$('#addPlannedRowButton').addEventListener('click', addPlannedRow);
+$('#plannedRows').addEventListener('input', (event) => {
+  const row = event.target.closest('.planned-row');
+  if (row) updatePlannedRow(row);
+});
+$('#plannedRows').addEventListener('focusout', (event) => {
+  const row = event.target.closest('.planned-row');
+  if (!row) return;
+  const item = state.plannedExpenses.find((entry) => entry.id === row.dataset.id);
+  if (item) item.category = item.category.trim();
+  saveState();
+});
+$('#plannedRows').addEventListener('click', (event) => {
+  const button = event.target.closest('.delete-planned');
+  if (!button) return;
+  const row = button.closest('.planned-row');
+  state.plannedExpenses = state.plannedExpenses.filter((item) => item.id !== row.dataset.id);
+  saveState();
+  renderPlannedExpenses();
+});
+
 monthPicker.addEventListener('change', renderExpenses);
-$('#addCategoryButton').addEventListener('click', () => { $('#categoryDialog').showModal(); $('#categoryNameInput').focus(); });
+$('#addCategoryButton').addEventListener('click', () => { $('#categoryDialog').showModal(); $('#categoryNameInput').focus({ preventScroll: true }); });
 $('#categoryForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const name = $('#categoryNameInput').value.trim();
@@ -163,27 +236,29 @@ $('#exportButton').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `koshelek-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.download = `puls-backup-${new Date().toISOString().slice(0, 10)}.json`;
   link.click();
   URL.revokeObjectURL(link.href);
 });
 
 $('#importInput').addEventListener('change', async (event) => {
   try {
-    const parsed = JSON.parse(await event.target.files[0].text());
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const parsed = JSON.parse(await file.text());
     if (!Array.isArray(parsed.categories) || !Array.isArray(parsed.expenses)) throw new Error();
-    state = parsed;
+    state = { ...parsed, plannedExpenses: Array.isArray(parsed.plannedExpenses) ? parsed.plannedExpenses : [] };
     saveState();
-    renderCategories(); renderExpenses(); renderAnalytics();
+    renderCategories(); renderPlannedExpenses(); renderExpenses(); renderAnalytics();
     showToast('Резервная копия загружена');
   } catch { showToast('Не удалось прочитать файл'); }
   event.target.value = '';
 });
 
 $('#clearButton').addEventListener('click', () => {
-  if (!confirm('Удалить все категории и расходы без возможности восстановления?')) return;
+  if (!confirm('Удалить все категории, расходы и планируемые траты без возможности восстановления?')) return;
   state = structuredClone(defaultState);
-  saveState(); renderCategories(); renderExpenses(); renderAnalytics();
+  saveState(); renderCategories(); renderPlannedExpenses(); renderExpenses(); renderAnalytics();
 });
 
 window.addEventListener('beforeinstallprompt', (event) => {
@@ -192,6 +267,10 @@ window.addEventListener('beforeinstallprompt', (event) => {
 $('#installButton').addEventListener('click', async () => { if (deferredInstallPrompt) await deferredInstallPrompt.prompt(); });
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 
+document.addEventListener('gesturestart', (event) => event.preventDefault());
+document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
+
 renderCategories();
+renderPlannedExpenses();
 renderExpenses();
 renderAnalytics();
