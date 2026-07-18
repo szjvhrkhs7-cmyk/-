@@ -1,9 +1,15 @@
-import { calculateRemaining, normalizeAmount, totalAmounts } from './utils.js';
+import { calculateRemaining, hasLegacyData, migrateState, normalizeAmount, totalAmounts } from './utils.js';
 
 const STORAGE_KEY = 'koshelek-v1';
+const LEGACY_BACKUP_KEY = 'koshelek-v1-legacy-backup';
 const defaultState = {
+  version: 2,
   income: '',
-  plannedExpenses: []
+  plannedExpenses: [],
+  legacyArchive: {
+    categories: [],
+    expenses: []
+  }
 };
 
 let state = loadState();
@@ -18,21 +24,25 @@ function createId() {
 
 function loadState() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!parsed || typeof parsed !== 'object') return structuredClone(defaultState);
+    const rawState = localStorage.getItem(STORAGE_KEY);
+    if (!rawState) return structuredClone(defaultState);
 
-    const plannedExpenses = Array.isArray(parsed.plannedExpenses)
-      ? parsed.plannedExpenses.map((item) => ({
-          id: item?.id ? String(item.id) : createId(),
-          category: typeof item?.category === 'string' ? item.category : '',
-          amount: typeof item?.amount === 'string' || typeof item?.amount === 'number' ? item.amount : ''
-        }))
-      : [];
+    const parsed = JSON.parse(rawState);
 
-    return {
-      income: typeof parsed.income === 'string' || typeof parsed.income === 'number' ? parsed.income : '',
-      plannedExpenses
-    };
+    if (hasLegacyData(parsed) && !localStorage.getItem(LEGACY_BACKUP_KEY)) {
+      try {
+        localStorage.setItem(LEGACY_BACKUP_KEY, rawState);
+      } catch {
+        // Основная миграция продолжает работать, даже если для дополнительной копии не хватило места.
+      }
+    }
+
+    const migrated = migrateState(parsed);
+    migrated.plannedExpenses = migrated.plannedExpenses.map((item) => ({
+      ...item,
+      id: item.id || createId()
+    }));
+    return migrated;
   } catch {
     return structuredClone(defaultState);
   }
@@ -162,6 +172,6 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('gesturestart', (event) => event.preventDefault());
 document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
 
-// Перезаписываем старую модель хранения: фактические расходы и их категории больше не сохраняются.
+// После первого запуска старые плановые данные остаются рабочими, а категории и фактические операции сохраняются в архиве.
 saveState();
 renderPlannedExpenses();
