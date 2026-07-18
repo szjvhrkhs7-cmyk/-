@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Пульс">
-  <meta name="description" content="Персональный учёт и аналитика расходов">
+  <meta name="description" content="Планирование бюджета и автоматический расчет остатка">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="stylesheet" href="styles.css">
-  <title>Пульс</title>
+  <title>Пульс — планирование бюджета</title>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -21,108 +21,50 @@
   <header class="app-header">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div><strong>Пульс</strong><span>финансы без шума</span></div>
+      <div><strong>Пульс</strong><span>бюджет без шума</span></div>
     </div>
     <button id="installButton" class="icon-button hidden" type="button" aria-label="Установить приложение">↓</button>
   </header>
 
   <main>
-    <section id="expensesView" class="view active">
-      <div class="hero-card">
-        <div class="hero-topline">
-          <span>Расходы за месяц</span>
-          <label class="month-control"><span class="sr-only">Месяц</span><input id="monthPicker" type="month"></label>
+    <section class="budget-section" aria-labelledby="budgetTitle">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Планирование</span>
+          <h1 id="budgetTitle">Бюджет</h1>
         </div>
-        <strong id="heroTotal" class="hero-total">0 ₽</strong>
-        <div class="hero-caption"><span class="pulse-dot"></span>Обновляется после каждой записи</div>
+        <button id="addPlannedRowButton" class="add-category" type="button">+ строка</button>
+      </div>
+      <p class="section-description">Укажите доход и запланируйте расходы. Все изменения сохраняются автоматически на этом устройстве.</p>
+
+      <div class="income-card">
+        <label class="income-row" for="incomeInput">
+          <span>
+            <small>Доход</small>
+            <strong>Сумма на период</strong>
+          </span>
+          <span class="income-money">
+            <input id="incomeInput" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="incomeHelp">
+            <b>₽</b>
+          </span>
+        </label>
+        <p id="incomeHelp">Можно изменить в любой момент — остаток пересчитается сразу.</p>
       </div>
 
-      <section class="planned-section" aria-labelledby="plannedTitle">
-        <div class="section-heading planned-heading">
-          <div><span class="eyebrow">Бюджет</span><h2 id="plannedTitle">Планируемые траты</h2></div>
-          <button id="addPlannedRowButton" class="add-category" type="button">+ строка</button>
-        </div>
-        <p class="section-description">Добавляйте любые будущие категории и суммы. Изменения сохраняются автоматически.</p>
-        <div class="planned-card">
-          <div class="planned-table-header"><span>Категория</span><span>Сумма</span><span class="sr-only">Действия</span></div>
-          <div id="plannedRows" class="planned-rows"></div>
-          <div class="planned-total"><span>Итог</span><strong id="plannedTotal">0 ₽</strong></div>
-        </div>
-      </section>
-
-      <form id="expenseForm" class="quick-add">
-        <div class="quick-add-title">
-          <div><span class="eyebrow">Новая операция</span><h1>Добавить расход</h1></div>
-          <button id="addCategoryButton" class="add-category" type="button">+ категория</button>
-        </div>
-        <div class="form-grid">
-          <label class="field"><span>Категория</span><select id="categorySelect" required></select></label>
-          <label class="field amount-field"><span>Сумма</span><div class="money-input"><input id="amountInput" inputmode="decimal" placeholder="0" required><b>₽</b></div></label>
-          <label class="field"><span>Дата</span><input id="dateInput" type="date" required></label>
-          <button class="primary" type="submit"><span>Добавить</span><b>＋</b></button>
-        </div>
-      </form>
-
-      <section class="activity-section">
-        <div class="section-heading"><div><span class="eyebrow">История</span><h2>Последние траты</h2></div><span class="counter" id="expenseCounter">0 записей</span></div>
-        <div class="table-card">
-          <table>
-            <thead><tr><th>Категория</th><th>Дата</th><th class="amount">Сумма</th><th><span class="sr-only">Действия</span></th></tr></thead>
-            <tbody id="expenseRows"></tbody>
-            <tfoot><tr><td colspan="2">Итог за месяц</td><td id="monthTotal" class="amount">0 ₽</td><td></td></tr></tfoot>
-          </table>
-          <div id="emptyExpenses" class="empty hidden"><div class="empty-icon">↘</div><strong>Здесь пока тихо</strong><span>Добавьте первую трату, и она появится в истории.</span></div>
-        </div>
-      </section>
-    </section>
-
-    <section id="analyticsView" class="view">
-      <div class="analytics-header"><span class="eyebrow">Обзор расходов</span><h1>Аналитика</h1><p>Показывает фактические и планируемые траты по категориям.</p></div>
-      <div class="period-switch" role="group" aria-label="Период аналитики">
-        <button class="period active" data-period="month" type="button">Месяц</button>
-        <button class="period" data-period="quarter" type="button">3 месяца</button>
-        <button class="period" data-period="halfYear" type="button">Полгода</button>
-        <button class="period" data-period="year" type="button">Год</button>
+      <div class="planned-card">
+        <div class="planned-table-header"><span>Планируемая трата</span><span>Сумма</span><span class="sr-only">Действия</span></div>
+        <div id="plannedRows" class="planned-rows"></div>
+        <div class="planned-total"><span>Всего запланировано</span><strong id="plannedTotal">0 ₽</strong></div>
       </div>
-      <div class="metric"><div><span>Всего потрачено</span><small>за выбранный период</small></div><strong id="analyticsTotal">0 ₽</strong></div>
-      <div class="metric"><div><span>Планируемые траты</span><small>текущий план без привязки к периоду</small></div><strong id="plannedAnalyticsTotal">0 ₽</strong></div>
-      <div class="analytics-grid">
-        <article class="card"><div class="card-heading"><span class="chart-icon">◒</span><h2>Фактические по категориям</h2></div><div id="categoryChart" class="bars"></div></article>
-        <article class="card"><div class="card-heading"><span class="chart-icon">⌁</span><h2>Динамика фактических трат</h2></div><div id="monthChart" class="bars"></div></article>
-        <article class="card"><div class="card-heading"><span class="chart-icon">◎</span><h2>План по категориям</h2></div><div id="plannedCategoryChart" class="bars"></div></article>
-      </div>
-    </section>
 
-    <section id="settingsView" class="view">
-      <div class="analytics-header"><span class="eyebrow">Хранилище</span><h1>Ваши данные</h1><p>Все записи остаются только на этом устройстве и не отправляются на сервер.</p></div>
-      <article class="card settings-card">
-        <div class="privacy-badge">Локальное хранение</div>
-        <h2>Резервная копия</h2>
-        <p>Сохраните файл перед очисткой Safari или сменой телефона. Его можно импортировать обратно в приложение.</p>
-        <div class="settings-actions">
-          <button id="exportButton" class="secondary" type="button">Экспортировать</button>
-          <label class="file-button">Импортировать<input id="importInput" type="file" accept="application/json"></label>
-          <button id="clearButton" class="danger" type="button">Удалить данные</button>
-        </div>
-      </article>
+      <div id="balanceCard" class="balance-card" aria-live="polite">
+        <span>Останется после планируемых трат</span>
+        <strong id="remainingAmount">0 ₽</strong>
+        <small id="balanceHint">Доход 0 ₽ − расходы 0 ₽</small>
+      </div>
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="Разделы приложения">
-    <button class="tab active" data-view="expenses" type="button"><span class="nav-icon">⌂</span><span>Расходы</span></button>
-    <button class="tab" data-view="analytics" type="button"><span class="nav-icon">◫</span><span>Аналитика</span></button>
-    <button class="tab" data-view="settings" type="button"><span class="nav-icon">◇</span><span>Данные</span></button>
-  </nav>
-
-  <dialog id="categoryDialog">
-    <form id="categoryForm" method="dialog">
-      <span class="eyebrow">Настройка</span><h2>Новая категория</h2>
-      <label class="field"><span>Название</span><input id="categoryNameInput" maxlength="40" autocomplete="off" placeholder="Например, Кофе" required></label>
-      <div class="dialog-actions"><button value="cancel" class="ghost">Отмена</button><button value="default" class="primary">Создать</button></div>
-    </form>
-  </dialog>
-
-  <div id="toast" class="toast hidden" role="status"></div>
   <script type="module" src="app.js"></script>
 </body>
 </html>
