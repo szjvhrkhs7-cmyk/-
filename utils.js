@@ -13,3 +13,44 @@ export function calculateRemaining(income, plannedExpenses) {
   const safeIncome = Number.isFinite(numericIncome) ? numericIncome : 0;
   return Math.round((safeIncome - totalAmounts(plannedExpenses)) * 100) / 100;
 }
+
+export function hasLegacyData(rawState) {
+  return Boolean(rawState && typeof rawState === 'object' && (
+    Array.isArray(rawState.categories) || Array.isArray(rawState.expenses)
+  ));
+}
+
+export function migrateState(rawState) {
+  const source = rawState && typeof rawState === 'object' ? rawState : {};
+  const existingArchive = source.legacyArchive && typeof source.legacyArchive === 'object'
+    ? source.legacyArchive
+    : {};
+
+  const archivedCategories = [
+    ...(Array.isArray(existingArchive.categories) ? existingArchive.categories : []),
+    ...(Array.isArray(source.categories) ? source.categories : [])
+  ].filter((category, index, items) => typeof category === 'string' && items.indexOf(category) === index);
+
+  const archivedExpenses = [
+    ...(Array.isArray(existingArchive.expenses) ? existingArchive.expenses : []),
+    ...(Array.isArray(source.expenses) ? source.expenses : [])
+  ].filter((expense) => expense && typeof expense === 'object');
+
+  const plannedExpenses = Array.isArray(source.plannedExpenses)
+    ? source.plannedExpenses.map((item) => ({
+        id: item?.id ? String(item.id) : '',
+        category: typeof item?.category === 'string' ? item.category : '',
+        amount: typeof item?.amount === 'string' || typeof item?.amount === 'number' ? item.amount : ''
+      }))
+    : [];
+
+  return {
+    version: 2,
+    income: typeof source.income === 'string' || typeof source.income === 'number' ? source.income : '',
+    plannedExpenses,
+    legacyArchive: {
+      categories: archivedCategories,
+      expenses: archivedExpenses
+    }
+  };
+}
