@@ -30,9 +30,10 @@ test('migrateState preserves every field from the old finance model', () => {
 
   assert.equal(hasLegacyData(oldState), true);
   assert.deepEqual(migrateState(oldState), {
-    version: 2,
+    version: 3,
     income: '',
     plannedExpenses: [{ id: 'p1', category: 'Отпуск', amount: '30000' }],
+    subscriptions: [],
     legacyArchive: {
       categories: ['Продукты', 'Дом'],
       expenses: oldState.expenses
@@ -40,8 +41,8 @@ test('migrateState preserves every field from the old finance model', () => {
   });
 });
 
-test('migrateState keeps an existing archive and income on repeat launches', () => {
-  const migrated = {
+test('migrateState adds subscriptions to an existing budget without losing data', () => {
+  const previousState = {
     version: 2,
     income: '120000',
     plannedExpenses: [{ id: 'p1', category: 'Дом', amount: '45000' }],
@@ -51,6 +52,22 @@ test('migrateState keeps an existing archive and income on repeat launches', () 
     }
   };
 
-  assert.equal(hasLegacyData(migrated), false);
-  assert.deepEqual(migrateState(migrated), migrated);
+  assert.equal(hasLegacyData(previousState), false);
+  assert.deepEqual(migrateState(previousState), {
+    ...previousState,
+    version: 3,
+    subscriptions: []
+  });
+});
+
+test('migrateState preserves subscription rows on repeat launches', () => {
+  const currentState = {
+    version: 3,
+    income: '120000',
+    plannedExpenses: [],
+    subscriptions: [{ id: 's1', name: 'Музыка', amount: '299' }],
+    legacyArchive: { categories: [], expenses: [] }
+  };
+
+  assert.deepEqual(migrateState(currentState), currentState);
 });
