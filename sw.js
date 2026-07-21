@@ -1,4 +1,4 @@
-const CACHE = 'puls-v8';
+const CACHE = 'puls-v9';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './utils.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (event) => event.waitUntil(
