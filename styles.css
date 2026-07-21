@@ -108,7 +108,7 @@ main {
 @keyframes page-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .eyebrow { color: var(--accent); font-size: .69rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-h1, p { margin-top: 0; }
+h1, h2, p { margin-top: 0; }
 h1 { margin: 6px 0 0; font-size: clamp(2rem, 7vw, 3.1rem); letter-spacing: -.045em; }
 .section-description { max-width: 620px; margin: 12px 0 0; color: var(--muted); font-size: .88rem; line-height: 1.6; }
 .add-category {
@@ -122,7 +122,7 @@ h1 { margin: 6px 0 0; font-size: clamp(2rem, 7vw, 3.1rem); letter-spacing: -.045
   font-weight: 800;
 }
 
-.income-card, .planned-card, .subscription-card, .balance-card {
+.income-card, .planned-card, .subscription-card, .balance-card, .backup-card {
   margin-top: 18px;
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -235,6 +235,26 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
 .balance-card.negative { background: radial-gradient(circle at 88% 10%, rgba(255, 127, 143, .22), transparent 35%), linear-gradient(135deg, #201725, #141322 65%, #101521); }
 .balance-card.negative strong { color: var(--danger); }
 
+.backup-card { padding: 20px; }
+.backup-copy h2 { margin: 5px 0 8px; font-size: 1.2rem; letter-spacing: -.025em; }
+.backup-copy p { margin: 0; max-width: 680px; color: var(--muted); font-size: .82rem; line-height: 1.55; }
+.backup-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 16px; }
+.backup-button {
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .04);
+  color: var(--text);
+  font-size: .82rem;
+  font-weight: 800;
+}
+.backup-button:active { transform: translateY(1px); }
+.backup-primary { border-color: rgba(140, 242, 208, .18); background: rgba(140, 242, 208, .11); color: var(--accent); }
+.backup-status { margin: 13px 0 0; color: var(--muted); font-size: .75rem; line-height: 1.45; }
+.backup-status[data-type="success"] { color: var(--accent); }
+.backup-status[data-type="error"] { color: var(--danger); }
+
 .hidden { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
@@ -254,4 +274,6 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
   .planned-total, .subscription-total { align-items: flex-end; }
   .planned-total span, .subscription-total span { max-width: 55%; }
   .balance-card { padding: 21px; }
+  .backup-card { padding: 17px; }
+  .backup-actions { grid-template-columns: 1fr; }
 }
