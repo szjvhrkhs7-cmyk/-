@@ -3,9 +3,10 @@ import { calculateRemaining, hasLegacyData, migrateState, normalizeAmount, total
 const STORAGE_KEY = 'koshelek-v1';
 const LEGACY_BACKUP_KEY = 'koshelek-v1-legacy-backup';
 const defaultState = {
-  version: 2,
+  version: 3,
   income: '',
   plannedExpenses: [],
+  subscriptions: [],
   legacyArchive: {
     categories: [],
     expenses: []
@@ -42,6 +43,10 @@ function loadState() {
       ...item,
       id: item.id || createId()
     }));
+    migrated.subscriptions = migrated.subscriptions.map((item) => ({
+      ...item,
+      id: item.id || createId()
+    }));
     return migrated;
   } catch {
     return structuredClone(defaultState);
@@ -55,6 +60,12 @@ function saveState() {
 function normalizedPlannedExpenses() {
   return state.plannedExpenses
     .map((item) => ({ category: item.category.trim() || 'Без категории', amount: normalizeAmount(item.amount) || 0 }))
+    .filter((item) => item.amount > 0);
+}
+
+function normalizedSubscriptions() {
+  return state.subscriptions
+    .map((item) => ({ name: item.name.trim() || 'Без названия', amount: normalizeAmount(item.amount) || 0 }))
     .filter((item) => item.amount > 0);
 }
 
@@ -99,6 +110,27 @@ function renderPlannedExpenses() {
   renderBudgetSummary();
 }
 
+function renderSubscriptions() {
+  const container = $('#subscriptionRows');
+
+  if (!state.subscriptions.length) {
+    container.innerHTML = '<div class="subscription-empty">Нажмите «+ подписка», чтобы добавить первую строку.</div>';
+  } else {
+    container.replaceChildren(...state.subscriptions.map((item) => {
+      const row = document.createElement('div');
+      row.className = 'subscription-row';
+      row.dataset.id = item.id;
+      row.innerHTML = `
+        <input class="subscription-name" value="${escapeHtml(item.name)}" maxlength="50" aria-label="Название подписки" placeholder="Например, Яндекс Плюс">
+        <div class="subscription-money"><input class="subscription-amount" value="${escapeHtml(item.amount || '')}" inputmode="decimal" aria-label="Стоимость подписки" placeholder="0"><span>₽</span></div>
+        <button class="delete-subscription" type="button" aria-label="Удалить подписку">×</button>`;
+      return row;
+    }));
+  }
+
+  $('#subscriptionTotal').textContent = money.format(totalAmounts(normalizedSubscriptions()));
+}
+
 function addPlannedRow() {
   const item = { id: createId(), category: '', amount: '' };
   state.plannedExpenses.push(item);
@@ -107,6 +139,18 @@ function addPlannedRow() {
 
   requestAnimationFrame(() => {
     const input = document.querySelector(`.planned-row[data-id="${CSS.escape(item.id)}"] .planned-category`);
+    input?.focus({ preventScroll: true });
+  });
+}
+
+function addSubscriptionRow() {
+  const item = { id: createId(), name: '', amount: '' };
+  state.subscriptions.push(item);
+  saveState();
+  renderSubscriptions();
+
+  requestAnimationFrame(() => {
+    const input = document.querySelector(`.subscription-row[data-id="${CSS.escape(item.id)}"] .subscription-name`);
     input?.focus({ preventScroll: true });
   });
 }
@@ -121,6 +165,31 @@ function updatePlannedRow(row) {
   renderBudgetSummary();
 }
 
+function updateSubscriptionRow(row) {
+  const item = state.subscriptions.find((entry) => entry.id === row.dataset.id);
+  if (!item) return;
+
+  item.name = row.querySelector('.subscription-name').value.trimStart();
+  item.amount = row.querySelector('.subscription-amount').value;
+  saveState();
+  $('#subscriptionTotal').textContent = money.format(totalAmounts(normalizedSubscriptions()));
+}
+
+function switchPage(page, updateHash = true) {
+  const nextPage = page === 'subscriptions' ? 'subscriptions' : 'budget';
+
+  document.querySelectorAll('[data-page]').forEach((panel) => {
+    panel.classList.toggle('hidden', panel.dataset.page !== nextPage);
+  });
+  document.querySelectorAll('[data-page-target]').forEach((button) => {
+    const active = button.dataset.pageTarget === nextPage;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', String(active));
+  });
+
+  if (updateHash) history.replaceState(null, '', nextPage === 'subscriptions' ? '#subscriptions' : '#budget');
+}
+
 const incomeInput = $('#incomeInput');
 incomeInput.value = state.income;
 incomeInput.addEventListener('input', () => {
@@ -129,11 +198,22 @@ incomeInput.addEventListener('input', () => {
   renderBudgetSummary();
 });
 
+$('#appTabs').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-page-target]');
+  if (button) switchPage(button.dataset.pageTarget);
+});
+
 $('#addPlannedRowButton').addEventListener('click', addPlannedRow);
+$('#addSubscriptionRowButton').addEventListener('click', addSubscriptionRow);
 
 $('#plannedRows').addEventListener('input', (event) => {
   const row = event.target.closest('.planned-row');
   if (row) updatePlannedRow(row);
+});
+
+$('#subscriptionRows').addEventListener('input', (event) => {
+  const row = event.target.closest('.subscription-row');
+  if (row) updateSubscriptionRow(row);
 });
 
 $('#plannedRows').addEventListener('focusout', (event) => {
@@ -142,6 +222,15 @@ $('#plannedRows').addEventListener('focusout', (event) => {
 
   const item = state.plannedExpenses.find((entry) => entry.id === row.dataset.id);
   if (item) item.category = item.category.trim();
+  saveState();
+});
+
+$('#subscriptionRows').addEventListener('focusout', (event) => {
+  const row = event.target.closest('.subscription-row');
+  if (!row) return;
+
+  const item = state.subscriptions.find((entry) => entry.id === row.dataset.id);
+  if (item) item.name = item.name.trim();
   saveState();
 });
 
@@ -154,6 +243,18 @@ $('#plannedRows').addEventListener('click', (event) => {
   saveState();
   renderPlannedExpenses();
 });
+
+$('#subscriptionRows').addEventListener('click', (event) => {
+  const button = event.target.closest('.delete-subscription');
+  if (!button) return;
+
+  const row = button.closest('.subscription-row');
+  state.subscriptions = state.subscriptions.filter((item) => item.id !== row.dataset.id);
+  saveState();
+  renderSubscriptions();
+});
+
+window.addEventListener('hashchange', () => switchPage(location.hash.slice(1), false));
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
@@ -175,3 +276,5 @@ document.addEventListener('dblclick', (event) => event.preventDefault(), { passi
 // После первого запуска старые плановые данные остаются рабочими, а категории и фактические операции сохраняются в архиве.
 saveState();
 renderPlannedExpenses();
+renderSubscriptions();
+switchPage(location.hash.slice(1), false);
