@@ -1,7 +1,17 @@
-import { calculateRemaining, hasLegacyData, migrateState, normalizeAmount, totalAmounts } from './utils.js';
+import {
+  calculateRemaining,
+  createBackupPayload,
+  hasLegacyData,
+  migrateState,
+  normalizeAmount,
+  parseBackupPayload,
+  totalAmounts
+} from './utils.js';
 
 const STORAGE_KEY = 'koshelek-v1';
 const LEGACY_BACKUP_KEY = 'koshelek-v1-legacy-backup';
+const PRE_RESTORE_BACKUP_KEY = 'koshelek-v1-pre-restore-backup';
+const MAX_BACKUP_FILE_SIZE = 2 * 1024 * 1024;
 const defaultState = {
   version: 3,
   income: '',
@@ -23,6 +33,19 @@ function createId() {
   return typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 }
 
+function hydrateState(rawState) {
+  const migrated = migrateState(rawState);
+  migrated.plannedExpenses = migrated.plannedExpenses.map((item) => ({
+    ...item,
+    id: item.id || createId()
+  }));
+  migrated.subscriptions = migrated.subscriptions.map((item) => ({
+    ...item,
+    id: item.id || createId()
+  }));
+  return migrated;
+}
+
 function loadState() {
   try {
     const rawState = localStorage.getItem(STORAGE_KEY);
@@ -38,16 +61,7 @@ function loadState() {
       }
     }
 
-    const migrated = migrateState(parsed);
-    migrated.plannedExpenses = migrated.plannedExpenses.map((item) => ({
-      ...item,
-      id: item.id || createId()
-    }));
-    migrated.subscriptions = migrated.subscriptions.map((item) => ({
-      ...item,
-      id: item.id || createId()
-    }));
-    return migrated;
+    return hydrateState(parsed);
   } catch {
     return structuredClone(defaultState);
   }
@@ -190,6 +204,53 @@ function switchPage(page, updateHash = true) {
   if (updateHash) history.replaceState(null, '', nextPage === 'subscriptions' ? '#subscriptions' : '#budget');
 }
 
+function setBackupStatus(message, type = '') {
+  const status = $('#backupStatus');
+  status.textContent = message;
+  status.dataset.type = type;
+}
+
+function downloadBackup() {
+  try {
+    saveState();
+    const payload = createBackupPayload(state);
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `puls-backup-${payload.createdAt.slice(0, 10)}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBackupStatus('Резервная копия подготовлена. Сохраните файл в надёжном месте.', 'success');
+  } catch {
+    setBackupStatus('Не удалось создать резервную копию. Проверьте настройки браузера.', 'error');
+  }
+}
+
+async function restoreFromBackup(file) {
+  if (!file) return;
+  if (file.size > MAX_BACKUP_FILE_SIZE) {
+    throw new Error('Файл слишком большой. Максимальный размер резервной копии — 2 МБ.');
+  }
+
+  const restored = parseBackupPayload(await file.text());
+  const approved = window.confirm('Заменить текущие данные сведениями из резервной копии? Перед заменой приложение сохранит текущие данные локально.');
+  if (!approved) {
+    setBackupStatus('Восстановление отменено. Текущие данные не изменены.');
+    return;
+  }
+
+  localStorage.setItem(PRE_RESTORE_BACKUP_KEY, JSON.stringify(createBackupPayload(state)));
+  state = hydrateState(restored);
+  saveState();
+  incomeInput.value = state.income;
+  renderPlannedExpenses();
+  renderSubscriptions();
+  setBackupStatus(`Данные восстановлены: ${state.plannedExpenses.length} плановых трат и ${state.subscriptions.length} подписок.`, 'success');
+}
+
 const incomeInput = $('#incomeInput');
 incomeInput.value = state.income;
 incomeInput.addEventListener('input', () => {
@@ -252,6 +313,19 @@ $('#subscriptionRows').addEventListener('click', (event) => {
   state.subscriptions = state.subscriptions.filter((item) => item.id !== row.dataset.id);
   saveState();
   renderSubscriptions();
+});
+
+$('#downloadBackupButton').addEventListener('click', downloadBackup);
+$('#restoreBackupButton').addEventListener('click', () => $('#backupFileInput').click());
+$('#backupFileInput').addEventListener('change', async (event) => {
+  const input = event.currentTarget;
+  try {
+    await restoreFromBackup(input.files?.[0]);
+  } catch (error) {
+    setBackupStatus(error instanceof Error ? error.message : 'Не удалось восстановить данные из копии.', 'error');
+  } finally {
+    input.value = '';
+  }
 });
 
 window.addEventListener('hashchange', () => switchPage(location.hash.slice(1), false));
