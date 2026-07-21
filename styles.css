@@ -84,6 +84,28 @@ main {
   margin: auto;
   padding: 8px 16px calc(44px + env(safe-area-inset-bottom));
 }
+.app-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 24px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .035);
+}
+.app-tab {
+  min-height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .84rem;
+  font-weight: 800;
+}
+.app-tab.active { background: rgba(140, 242, 208, .12); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(140, 242, 208, .12); }
+.page-panel { animation: page-in .18s ease; }
+@keyframes page-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .eyebrow { color: var(--accent); font-size: .69rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 h1, p { margin-top: 0; }
@@ -100,7 +122,7 @@ h1 { margin: 6px 0 0; font-size: clamp(2rem, 7vw, 3.1rem); letter-spacing: -.045
   font-weight: 800;
 }
 
-.income-card, .planned-card, .balance-card {
+.income-card, .planned-card, .subscription-card, .balance-card {
   margin-top: 18px;
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -132,14 +154,15 @@ h1 { margin: 6px 0 0; font-size: clamp(2rem, 7vw, 3.1rem); letter-spacing: -.045
 .income-card p { margin: 12px 0 0; color: var(--muted); font-size: .77rem; line-height: 1.45; }
 input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba(140, 242, 208, .08); }
 
-.planned-card { overflow: hidden; }
-.planned-table-header, .planned-row {
+.planned-card, .subscription-card { overflow: hidden; }
+.planned-table-header, .planned-row, .subscription-table-header, .subscription-row {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(108px, .8fr) 38px;
   gap: 9px;
   align-items: center;
 }
-.planned-table-header {
+.planned-table-header > *, .planned-row > *, .subscription-table-header > *, .subscription-row > * { min-width: 0; }
+.planned-table-header, .subscription-table-header {
   padding: 14px 16px 10px;
   color: #6f788b;
   font-size: .67rem;
@@ -147,9 +170,9 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
   text-transform: uppercase;
   letter-spacing: .1em;
 }
-.planned-table-header span:nth-child(2) { text-align: right; }
-.planned-row { padding: 10px 12px; border-top: 1px solid var(--line); }
-.planned-row input {
+.planned-table-header span:nth-child(2), .subscription-table-header span:nth-child(2) { text-align: right; }
+.planned-row, .subscription-row { padding: 10px 12px; border-top: 1px solid var(--line); }
+.planned-row input, .subscription-row input {
   width: 100%;
   min-height: 46px;
   padding: 11px 13px;
@@ -160,10 +183,20 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
   outline: none;
   font-size: 16px;
 }
-.planned-money { position: relative; }
-.planned-money input { padding-right: 34px; text-align: right; font-variant-numeric: tabular-nums; }
-.planned-money span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-.delete-planned {
+.planned-money, .subscription-money { position: relative; }
+.planned-money input, .subscription-money input { padding-right: 52px; text-align: right; font-variant-numeric: tabular-nums; }
+.planned-money span, .subscription-money span {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  min-width: 20px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  text-align: center;
+  line-height: 1;
+  pointer-events: none;
+}
+.delete-planned, .delete-subscription {
   width: 34px;
   height: 34px;
   border: 0;
@@ -172,11 +205,11 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
   color: #7d8597;
   font-size: 1.15rem;
 }
-.delete-planned:active { color: var(--danger); background: rgba(255, 127, 143, .1); }
-.planned-total { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 16px; border-top: 1px solid var(--line); background: rgba(140, 242, 208, .045); }
-.planned-total span { color: #c7cddd; font-weight: 800; }
-.planned-total strong { color: var(--accent); font-size: 1.22rem; font-variant-numeric: tabular-nums; text-align: right; }
-.planned-empty { padding: 28px 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: .84rem; line-height: 1.55; }
+.delete-planned:active, .delete-subscription:active { color: var(--danger); background: rgba(255, 127, 143, .1); }
+.planned-total, .subscription-total { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 16px; border-top: 1px solid var(--line); background: rgba(140, 242, 208, .045); }
+.planned-total span, .subscription-total span { color: #c7cddd; font-weight: 800; }
+.planned-total strong, .subscription-total strong { color: var(--accent); font-size: 1.22rem; font-variant-numeric: tabular-nums; text-align: right; }
+.planned-empty, .subscription-empty { padding: 28px 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: .84rem; line-height: 1.55; }
 
 .balance-card {
   position: relative;
@@ -208,15 +241,17 @@ input:focus { border-color: rgba(140, 242, 208, .62); box-shadow: 0 0 0 4px rgba
 @media (max-width: 520px) {
   .app-header { padding-left: 14px; padding-right: 14px; }
   main { padding-left: 12px; padding-right: 12px; }
+  .app-tabs { margin-bottom: 20px; }
   .section-heading { align-items: flex-end; }
   .income-card { padding: 16px; }
   .income-row { align-items: flex-start; flex-direction: column; gap: 13px; }
   .income-money { width: 100%; }
-  .planned-table-header, .planned-row { grid-template-columns: minmax(0, 1.3fr) minmax(100px, .8fr) 34px; gap: 7px; }
-  .planned-table-header { padding-left: 12px; padding-right: 12px; }
-  .planned-row { padding: 9px; }
-  .planned-row input { padding-left: 10px; padding-right: 10px; }
-  .planned-total { align-items: flex-end; }
-  .planned-total span { max-width: 55%; }
+  .planned-table-header, .planned-row, .subscription-table-header, .subscription-row { grid-template-columns: minmax(0, 1.3fr) minmax(100px, .8fr) 34px; gap: 7px; }
+  .planned-table-header, .subscription-table-header { padding-left: 12px; padding-right: 12px; }
+  .planned-row, .subscription-row { padding: 9px; }
+  .planned-category, .subscription-name { padding-left: 10px !important; padding-right: 10px !important; }
+  .planned-money input, .subscription-money input { padding-left: 10px; padding-right: 52px; }
+  .planned-total, .subscription-total { align-items: flex-end; }
+  .planned-total span, .subscription-total span { max-width: 55%; }
   .balance-card { padding: 21px; }
 }
