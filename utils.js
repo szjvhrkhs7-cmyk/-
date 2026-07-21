@@ -44,10 +44,19 @@ export function migrateState(rawState) {
       }))
     : [];
 
+  const subscriptions = Array.isArray(source.subscriptions)
+    ? source.subscriptions.map((item) => ({
+        id: item?.id ? String(item.id) : '',
+        name: typeof item?.name === 'string' ? item.name : '',
+        amount: typeof item?.amount === 'string' || typeof item?.amount === 'number' ? item.amount : ''
+      }))
+    : [];
+
   return {
-    version: 2,
+    version: 3,
     income: typeof source.income === 'string' || typeof source.income === 'number' ? source.income : '',
     plannedExpenses,
+    subscriptions,
     legacyArchive: {
       categories: archivedCategories,
       expenses: archivedExpenses
