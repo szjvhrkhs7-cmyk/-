@@ -7,36 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Пульс">
-  <meta name="description" content="Планирование бюджета и автоматический расчет остатка">
+  <meta name="description" content="Планирование бюджета, подписок и автоматический расчет итогов">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .planned-table-header > *,
-    .planned-row > * {
-      min-width: 0;
-    }
-
-    .planned-money input {
-      padding-right: 52px;
-    }
-
-    .planned-money span {
-      right: 16px;
-      min-width: 20px;
-      text-align: center;
-      line-height: 1;
-    }
-
-    @media (max-width: 520px) {
-      .planned-money input {
-        padding-left: 10px;
-        padding-right: 52px;
-      }
-    }
-  </style>
-  <title>Пульс — планирование бюджета</title>
+  <link rel="stylesheet" href="styles.css?v=8">
+  <title>Пульс — бюджет и подписки</title>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -51,7 +27,12 @@
   </header>
 
   <main>
-    <section class="budget-section" aria-labelledby="budgetTitle">
+    <nav id="appTabs" class="app-tabs" role="tablist" aria-label="Разделы приложения">
+      <button class="app-tab active" type="button" role="tab" aria-selected="true" data-page-target="budget">Бюджет</button>
+      <button class="app-tab" type="button" role="tab" aria-selected="false" data-page-target="subscriptions">Подписки</button>
+    </nav>
+
+    <section class="budget-section page-panel" data-page="budget" aria-labelledby="budgetTitle">
       <div class="section-heading">
         <div>
           <span class="eyebrow">Планирование</span>
@@ -87,8 +68,25 @@
         <small id="balanceHint">Доход 0 ₽ − расходы 0 ₽</small>
       </div>
     </section>
+
+    <section class="subscriptions-section page-panel hidden" data-page="subscriptions" aria-labelledby="subscriptionsTitle">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Регулярные расходы</span>
+          <h1 id="subscriptionsTitle">Подписки</h1>
+        </div>
+        <button id="addSubscriptionRowButton" class="add-category" type="button">+ подписка</button>
+      </div>
+      <p class="section-description">Добавляйте сервисы и их стоимость. Итог рассчитывается автоматически и хранится на этом устройстве.</p>
+
+      <div class="subscription-card">
+        <div class="subscription-table-header"><span>Подписка</span><span>Стоимость</span><span class="sr-only">Действия</span></div>
+        <div id="subscriptionRows" class="subscription-rows"></div>
+        <div class="subscription-total"><span>Всего за месяц</span><strong id="subscriptionTotal">0 ₽</strong></div>
+      </div>
+    </section>
   </main>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=8"></script>
 </body>
 </html>
