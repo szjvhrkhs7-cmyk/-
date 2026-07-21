@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateRemaining, hasLegacyData, migrateState, normalizeAmount, totalAmounts } from '../utils.js';
+import {
+  calculateRemaining,
+  createBackupPayload,
+  hasLegacyData,
+  migrateState,
+  normalizeAmount,
+  parseBackupPayload,
+  totalAmounts
+} from '../utils.js';
 
 test('normalizeAmount accepts comma decimals', () => {
   assert.equal(normalizeAmount('1 234,56'), 1234.56);
@@ -70,4 +78,42 @@ test('migrateState preserves subscription rows on repeat launches', () => {
   };
 
   assert.deepEqual(migrateState(currentState), currentState);
+});
+
+test('backup payload round-trips the current app state', () => {
+  const currentState = {
+    version: 3,
+    income: '150000',
+    plannedExpenses: [{ id: 'p1', category: 'Жильё', amount: '50000' }],
+    subscriptions: [{ id: 's1', name: 'Музыка', amount: '299' }],
+    legacyArchive: { categories: [], expenses: [] }
+  };
+
+  const backup = createBackupPayload(currentState, '2026-07-21T12:00:00.000Z');
+  assert.equal(backup.format, 'puls-backup');
+  assert.equal(backup.backupVersion, 1);
+  assert.equal(backup.createdAt, '2026-07-21T12:00:00.000Z');
+  assert.deepEqual(parseBackupPayload(JSON.stringify(backup)), currentState);
+});
+
+test('backup import accepts a raw legacy state', () => {
+  const legacy = {
+    income: '90000',
+    categories: ['Дом'],
+    expenses: [{ id: 'e1', amount: 1000 }],
+    plannedExpenses: [{ category: 'Отпуск', amount: 20000 }]
+  };
+
+  const restored = parseBackupPayload(legacy);
+  assert.equal(restored.version, 3);
+  assert.equal(restored.income, '90000');
+  assert.equal(restored.plannedExpenses.length, 1);
+  assert.deepEqual(restored.legacyArchive.categories, ['Дом']);
+});
+
+test('backup import rejects unrelated or malformed JSON', () => {
+  assert.throws(() => parseBackupPayload('{bad json'), /JSON-файл/);
+  assert.throws(() => parseBackupPayload({ hello: 'world' }), /не является резервной копией/);
+  assert.throws(() => parseBackupPayload({ income: '', subscriptions: 'wrong' }), /должно быть массивом/);
+  assert.throws(() => parseBackupPayload({ format: 'puls-backup', backupVersion: 2, appState: {} }), /не поддерживается/);
 });
