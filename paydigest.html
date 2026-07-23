@@ -2,72 +2,86 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#111318">
-  <meta name="description" content="PayDigest — 10 проверенных материалов о платежах и ИИ за 19–23 июля 2026 года, 6 из России">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#080b15">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PayDigest">
+  <meta name="description" content="PayDigest — 10 новостей о платежах и 10 новостей об ИИ с приоритетом российского рынка">
   <title>PayDigest — платежи и ИИ</title>
-  <style>
-    :root{color-scheme:dark;--bg:#101216;--panel:#191c22;--panel2:#20242c;--line:#303640;--text:#f5f5f1;--muted:#a8adb7;--accent:#b9f36a;--purple:#b39cff;--blue:#75b8ff;--gold:#f3cd73;--red:#ff8d7d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 80% -10%,rgba(117,184,255,.14),transparent 32%),radial-gradient(circle at 0 35%,rgba(179,156,255,.1),transparent 28%),var(--bg);color:var(--text)}button,input{font:inherit}.header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(16,18,22,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.brand{font-size:19px;font-weight:850;letter-spacing:-.04em}.brand span{color:var(--accent)}.tabs{display:flex;gap:5px;padding:4px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}.tab{border:0;border-radius:9px;padding:8px 12px;background:transparent;color:var(--muted);font-weight:750}.tab.active{background:var(--text);color:#111}.wrap{max-width:980px;margin:auto;padding:28px 15px calc(56px + env(safe-area-inset-bottom))}.hero{padding:25px 0 8px}.eyebrow{margin:0 0 11px;color:var(--accent);font-size:12px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.hero h1{max-width:780px;margin:0;font-size:clamp(37px,9vw,72px);line-height:.98;letter-spacing:-.065em}.hero h1 em{color:var(--purple);font-style:normal}.hero-copy{max-width:720px;margin:18px 0 0;color:var(--muted);line-height:1.65}.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);color:#cdd1d8;font-size:12px;font-weight:700}.chip.ru{border-color:rgba(185,243,106,.35);color:var(--accent)}.editorial{margin:22px 0 26px;padding:16px 18px;border:1px solid rgba(185,243,106,.28);border-radius:18px;background:linear-gradient(135deg,rgba(185,243,106,.08),rgba(179,156,255,.05));color:var(--muted);line-height:1.55}.editorial b{color:var(--text)}.pulse{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 28px}.pulse-card{padding:18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,var(--panel2),var(--panel));box-shadow:0 20px 50px rgba(0,0,0,.14)}.pulse-card small{color:var(--accent);font-weight:850;text-transform:uppercase;letter-spacing:.09em}.pulse-card h2{margin:9px 0 7px;font-size:19px;line-height:1.25}.pulse-card p{margin:0;color:var(--muted);line-height:1.5;font-size:14px}.tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.tools h2{margin:0;font-size:26px;letter-spacing:-.04em}.search{width:min(330px,48%);min-height:44px;padding:10px 13px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--text);outline:none;font-size:16px}.search:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(179,156,255,.08)}.filters{display:flex;gap:7px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.filter{flex:none;border:1px solid var(--line);border-radius:999px;padding:8px 11px;background:transparent;color:var(--muted);font-size:12px;font-weight:750}.filter.active{background:var(--accent);border-color:var(--accent);color:#17200b}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{display:flex;flex-direction:column;min-width:0;padding:18px;border:1px solid var(--line);border-radius:20px;background:rgba(25,28,34,.94)}.card.featured{border-color:rgba(185,243,106,.4);background:linear-gradient(145deg,rgba(185,243,106,.09),var(--panel) 48%)}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.tag{padding:4px 7px;border-radius:7px;background:rgba(117,184,255,.1);color:var(--blue);font-size:10px;font-weight:850;text-transform:uppercase}.tag.russia{background:rgba(185,243,106,.1);color:var(--accent)}.tag.law{background:rgba(243,205,115,.1);color:var(--gold)}.tag.ai{background:rgba(179,156,255,.1);color:var(--purple)}.card h3{margin:0;font-size:19px;line-height:1.3;letter-spacing:-.025em}.card h3 a{color:inherit;text-decoration:none}.summary{margin:11px 0;color:var(--muted);font-size:14px;line-height:1.55}.impact{margin-top:auto;padding:13px;border-left:3px solid var(--purple);border-radius:0 10px 10px 0;background:rgba(179,156,255,.065);color:#d8d3e6;font-size:13px;line-height:1.5}.impact b{display:block;margin-bottom:4px;color:var(--purple);font-size:10px;letter-spacing:.08em;text-transform:uppercase}.footer{display:flex;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:#858b96;font-size:11px}.footer a{color:var(--accent);text-decoration:none}.empty{padding:45px 15px;text-align:center;color:var(--muted)}.site-footer{margin-top:34px;padding:22px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.5}
-    @media(max-width:680px){.header{align-items:flex-start}.brand{padding-top:8px}.wrap{padding-top:14px}.hero{padding-top:20px}.pulse,.grid{grid-template-columns:1fr}.tools{align-items:flex-start;flex-direction:column}.search{width:100%}.card h3{font-size:18px}.footer{align-items:flex-start;flex-direction:column}.hero h1{font-size:44px}.tab{padding:8px 10px}}
-  </style>
+  <link rel="stylesheet" href="paydigest.css?v=2">
 </head>
 <body>
-  <header class="header">
-    <div class="brand">Pay<span>Digest</span></div>
-    <nav class="tabs" aria-label="Разделы">
-      <button class="tab active" data-section="payments" type="button">Платежи</button>
-      <button class="tab" data-section="ai" type="button">ИИ</button>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Pay<em>Digest</em></span></div>
+      <button id="searchButton" class="icon-button" type="button" aria-label="Поиск">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+      </button>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen">
+        <div id="sectionTabs" class="section-tabs" aria-label="Разделы новостей">
+          <button class="section-tab active" data-section="payments" type="button">Платежи</button>
+          <button class="section-tab" data-section="ai" type="button">ИИ</button>
+          <button class="section-tab" data-filter="Россия" type="button">Россия</button>
+          <button class="section-tab" data-filter="Регулирование" type="button">Регулирование</button>
+        </div>
+        <div class="section-kicker"><span id="sectionLabel"><b>Платежи</b> · 10 материалов</span><span>23 июля 2026</span></div>
+        <article id="featuredCard" class="featured"></article>
+        <div class="list-header"><h2>Новости для вас</h2><span id="sectionCount" class="count-badge">10 новостей</span></div>
+        <div id="newsList" class="news-list"></div>
+      </section>
+
+      <section id="digestScreen" class="screen hidden">
+        <div class="section-kicker"><span><b>ИИ-дайджест</b></span><span>Сформировано редакцией</span></div>
+        <h1 class="digest-title">Главное за день</h1>
+        <div class="digest-hero">
+          <span class="label">✦ Ключевые события</span>
+          <h2>20 материалов превращены в пять выводов</h2>
+          <p>Короткий маршрут по платежной и ИИ-повестке с приоритетом российского рынка и регулирования.</p>
+          <div id="digestList" class="digest-list"></div>
+        </div>
+        <div class="trend-wrap"><h2 class="list-header">Темы в тренде</h2><div id="trendTags" class="trend-tags"></div></div>
+      </section>
+
+      <section id="favoritesScreen" class="screen hidden">
+        <div class="section-kicker"><span><b>Сохранённое</b></span><span id="favoritesCount">0 материалов</span></div>
+        <h1 class="profile-title">Избранное</h1>
+        <div id="favoritesList" class="news-list" style="margin-top:16px"></div>
+      </section>
+
+      <section id="profileScreen" class="screen hidden">
+        <div class="section-kicker"><span><b>О приложении</b></span><span>PayDigest 2.0</span></div>
+        <h1 class="profile-title">Редакционный профиль</h1>
+        <div class="stat-grid"><div class="stat"><strong>20</strong><span>материалов всего</span></div><div class="stat"><strong>10 + 10</strong><span>платежи и ИИ</span></div></div>
+        <div class="profile-card"><h3>Правила выпуска</h3><ul><li>Ровно 10 материалов в разделе «Платежи».</li><li>Ровно 10 материалов в разделе «ИИ».</li><li>Не менее 6 российских материалов в каждом разделе.</li><li>Российское право и позиции Банка России имеют приоритет.</li><li>Международные кейсы включаются при наличии практического вывода для России.</li></ul></div>
+        <div class="profile-card"><h3>Источники</h3><p>Банк России, российские отраслевые издания, официальные сообщения участников рынка и проверенные международные финтех-медиа.</p></div>
+      </section>
+    </main>
+
+    <nav id="bottomNav" class="bottom-nav" aria-label="Основная навигация">
+      <button class="nav-button active" data-screen="home" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10H7v-7h10v7"></path></svg><span>Главная</span></button>
+      <button class="nav-button" data-screen="digest" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 2 1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2Z"></path><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"></path></svg><span>ИИ-дайджест</span></button>
+      <button class="nav-button" data-screen="favorites" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Избранное</span></button>
+      <button class="nav-button" data-screen="profile" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path></svg><span>Профиль</span></button>
     </nav>
-  </header>
-  <main class="wrap">
-    <section class="hero">
-      <p class="eyebrow">Профессиональный радар · 23 июля 2026</p>
-      <h1>Россия — в фокусе.<br><em>Мир — для сравнения.</em></h1>
-      <p class="hero-copy">Десять проверенных материалов за 19–23 июля 2026 года. Шесть публикаций посвящены российскому платежному рынку, банковским технологиям и регулированию.</p>
-      <div class="meta"><span class="chip">10 материалов</span><span class="chip ru">6 о России</span><span class="chip">4 международных</span><span class="chip">актуально на 23 июля</span></div>
-    </section>
-    <div class="editorial"><b>Редакционное правило:</b> российские нормативные инициативы и правоприменительные события включаются в профильную ленту и маркируются тегом «Регулирование». Международные материалы отбираются только при наличии применимого вывода для российского рынка.</div>
-    <section class="pulse">
-      <article class="pulse-card"><small>Россия · регулирование</small><h2>Крипторынок получает регулируемую инфраструктуру</h2><p>Новые правила создают лицензируемых посредников, разделяют доступ квалифицированных и неквалифицированных инвесторов и сохраняют запрет внутренних расчетов криптовалютой.</p></article>
-      <article class="pulse-card"><small>Платежи · ИИ</small><h2>Контроль полномочий становится главным вопросом агентных платежей</h2><p>Развитие автономных финансовых агентов требует фиксировать согласие клиента, пределы поручения, журналы действий и персональную ответственность за результат.</p></article>
-    </section>
-    <section>
-      <div class="tools"><h2 id="sectionTitle">Платежи и регулирование</h2><input class="search" id="search" type="search" placeholder="Поиск по материалам" autocomplete="off"></div>
-      <div class="filters" id="filters"></div>
-      <div class="grid" id="grid"></div>
-      <div class="empty" id="empty" hidden>Материалы не найдены.</div>
-    </section>
-    <footer class="site-footer">PayDigest · выпуск за 19–23 июля 2026 года. Всего 10 материалов: 6 российских и 4 международных. Отдельный раздел «Право» отсутствует; правовые события встроены в тематическую ленту.</footer>
-  </main>
-  <script>
-    const items = [
-      {section:'payments',country:'Россия',date:'23 июля 2026',source:'Банковское обозрение',tags:['Россия','Карты','Риск-модели'],title:'Средние лимиты по новым кредитным картам снизились на 5,3%',url:'https://bosfera.ru/press-release/limity-po-novym-kreditnym-kartam-v-iyune-snizilis-bolee-chem-na-5',summary:'Средний лимит по новым кредитным картам в июне составил 107,4 тыс. рублей, снизившись на 5,3% за месяц и на 7,2% год к году. Банки сохраняют осторожный подход к оценке заемщиков.',impact:'Снижение лимитов показывает, что восстановление карточного рынка остается ограниченным риск-аппетитом банков. Для продуктовых команд важнее становятся точная сегментация, управление действующими лимитами и качество скоринга.',featured:true},
-      {section:'payments',country:'Россия',date:'23 июля 2026',source:'Банковское обозрение',tags:['Россия','Банки','Регулирование'],title:'Банк «Элемент» получил универсальную лицензию Банка России',url:'https://bosfera.ru/press-release/bank-element-poluchil-universalnuyu-licenziyu-cb',summary:'Банк получил право проводить операции в рублях и иностранной валюте, привлекать средства физических лиц во вклады и работать с драгоценными металлами. С 22 июля он также включен в систему страхования вкладов.',impact:'Выход нового универсального банка повышает конкуренцию за клиентов и инфраструктурных партнеров. Практическое значение будет зависеть от продуктовой специализации, цифровой модели обслуживания и доступа к платежным каналам.'},
-      {section:'payments',country:'Россия',date:'21 июля 2026',source:'Банк России',tags:['Россия','Регулирование','Криптовалюты','Трансграничные расчеты'],title:'В России установлены правила регулируемого обращения криптовалют',url:'https://www.cbr.ru/press/event/?id=32719',summary:'Госдума приняла закон, который вводит регулируемых посредников, криптообменники и цифровые депозитарии. Для неквалифицированных инвесторов предусмотрены тестирование и годовой лимит, а внутренние расчеты криптовалютой остаются запрещенными.',impact:'Закон создает новый регулируемый контур для банков, брокеров и инфраструктурных организаций. Отдельного внимания требуют лицензирование, KYT, хранение активов, трансграничные расчеты и переходный период до 1 июля 2027 года.'},
-      {section:'payments',country:'Россия',date:'21 июля 2026',source:'Банковское обозрение',tags:['Россия','Регулирование','ЭСП','Антифрод'],title:'Подросткам могут ограничить самостоятельное оформление электронных кошельков',url:'https://bosfera.ru/press-release/podrostkam-mogut-ogranichit-otkrytie-elektronnyh-koshelkov',summary:'В рамках обсуждения пакета «Антифрод 3.0» предлагается требовать согласие законного представителя при оформлении электронных средств платежа несовершеннолетними от 14 до 18 лет. Окончательного решения пока нет.',impact:'Банкам и платежным сервисам необходимо заранее оценить способы получения и хранения согласия, перечень затрагиваемых ЭСП и влияние на действующие клиентские сценарии. Инициативу пока нельзя считать вступившей в силу нормой.'},
-      {section:'payments',country:'Россия',date:'20 июля 2026',source:'Банковское обозрение',tags:['Россия','Регулирование','Идентификация','Платежи'],title:'Хостеры предложили сохранить идентификацию иностранцев по банковскому платежу',url:'https://bosfera.ru/press-release/hostery-prosyat-sohranit-identifikaciyu-inostrancev-po-bankovskomu-platezhu',summary:'Российские хостинг-провайдеры предложили сохранить идентификацию иностранных клиентов через банковский платеж при совпадении данных плательщика и пользователя. Вопрос обсуждался с Минцифры и участниками рынка.',impact:'Платеж в этой модели становится элементом доверенной идентификации. Для банков критичны состав передаваемых реквизитов, качество сопоставления данных, согласие клиента и правовое основание межотраслевого обмена информацией.'},
-      {section:'ai',country:'Россия',date:'21 июля 2026',source:'Банковское обозрение',tags:['Россия','ИИ','Регулирование','Банки'],title:'Российские банки столкнулись с конфликтом требований к суверенному ИИ',url:'https://bosfera.ru/bo/suverennyy-tupik',summary:'Аналитический материал рассматривает одновременные требования к локализации ИИ, снижению зависимости от глобальных платформ и недопущению концентрации банков на одной модели. Рынок отечественных альтернатив пока ограничен.',impact:'Для банков формальное импортозамещение не решает модельный риск. Нужны диверсификация поставщиков, независимая валидация, контроль обучающих данных, мониторинг дрейфа и документированные сценарии отказа.'},
-      {section:'payments',country:'Мир',date:'23 июля 2026',source:'Reuters',tags:['Мир','UPI','Конкуренция','Мгновенные платежи'],title:'Индийские платежные сервисы выступили против однокнопочной оплаты через UPI',url:'https://www.reuters.com/world/india/indian-payments-firms-oppose-one-click-upi-checkout-proposal-citing-competition-2026-07-23/',summary:'Paytm, CRED и другие участники рынка предупредили, что сохранение предпочтительного UPI-приложения для оплаты в один клик может усилить позиции крупнейших платформ и сократить возможности небольших сервисов.',impact:'Для российского рынка это полезный пример конфликта между удобством клиентского пути и конкуренцией на национальных платежных рельсах. Правила интерфейса могут влиять на рынок не меньше, чем тарифы и технический доступ.'},
-      {section:'payments',country:'Мир',date:'23 июля 2026',source:'FinTech Futures',tags:['Мир','Трансграничные платежи','Кошельки'],title:'TPBank подключился к TerraPay для переводов в 156 стран',url:'https://www.fintechfutures.com/cross-border-payments/terrapay-partners-tpbank-vietnam-cross-border-payments',summary:'Вьетнамский TPBank использует существующее подключение к Swift и сеть TerraPay, чтобы предоставить клиентам переводы в режиме реального времени на банковские счета и цифровые кошельки в 156 странах.',impact:'Кейс показывает гибридную модель трансграничных переводов: банк сохраняет действующую инфраструктуру сообщений, но добавляет альтернативную сеть доставки средств. Это снижает стоимость запуска и расширяет географию без полной замены платежного стека.'},
-      {section:'ai',country:'Мир',date:'22 июля 2026',source:'FinTech Futures',tags:['Мир','ИИ','Агентные платежи','Ответственность'],title:'Финансовому рынку предлагают заново определить полномочия ИИ-агентов',url:'https://www.fintechfutures.com/ai-in-fintech/who-authorised-the-algorithm-leadership-in-the-age-of-agentic-finance',summary:'Материал анализирует переход от рекомендательных моделей к системам, которые самостоятельно инициируют платежи, меняют продукты и выполняют финансовые действия от имени клиента.',impact:'Российским банкам необходимо заранее определить лимиты полномочий агента, срок действия поручения, подтверждение необычных операций, возможность немедленного отзыва согласия и персонального владельца риска.'},
-      {section:'ai',country:'Мир',date:'21 июля 2026',source:'FinTech Futures',tags:['Мир','ИИ','Банки','Антифрод'],title:'Bank of Ireland назначил первого директора по искусственному интеллекту',url:'https://www.fintechfutures.com/job-cuts-new-hires/bank-of-ireland-prag-sharma-chief-ai-officer-appointment',summary:'Новый руководитель должен централизовать ИИ-трансформацию банка. Организация уже применяет модели для анализа карточных операций, формирования персональных подсказок и предотвращения мошенничества.',impact:'Создание отдельной руководящей роли отражает переход от пилотных проектов к управлению единым портфелем ИИ. Для российских банков это ориентир по распределению ответственности между бизнесом, ИТ, рисками и комплаенсом.'}
-    ];
+  </div>
 
-    const TOTAL_REQUIRED=10, RUSSIA_MIN=6;
-    if(items.length!==TOTAL_REQUIRED||items.filter(x=>x.country==='Россия').length<RUSSIA_MIN){document.body.innerHTML='<main class="wrap"><div class="editorial"><b>Редакционная ошибка:</b> выпуск должен содержать ровно 10 материалов, минимум 6 из которых относятся к России.</div></main>';throw new Error('PayDigest editorial policy violation');}
+  <section id="searchPanel" class="search-panel hidden" aria-label="Поиск по новостям">
+    <div class="search-row"><input id="searchInput" class="search-input" type="search" placeholder="Поиск по 20 материалам" autocomplete="off"><button id="closeSearchButton" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
+    <div id="searchResults" class="search-results"></div>
+  </section>
 
-    let section='payments',filter='Все',query='';
-    const grid=document.getElementById('grid'),filters=document.getElementById('filters'),empty=document.getElementById('empty'),search=document.getElementById('search'),title=document.getElementById('sectionTitle');
-    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    function current(){return items.filter(x=>x.section===section).filter(x=>filter==='Все'||x.tags.includes(filter)).filter(x=>!query||[x.title,x.summary,x.impact,x.source,...x.tags].join(' ').toLowerCase().includes(query.toLowerCase()));}
-    function renderFilters(){const pool=items.filter(x=>x.section===section);const names=['Все',...new Set(pool.flatMap(x=>x.tags))];filters.innerHTML=names.map(n=>`<button class="filter ${filter===n?'active':''}" data-filter="${esc(n)}" type="button">${esc(n)}</button>`).join('');}
-    function card(x,i){const tagClass=t=>t==='Россия'?'russia':t==='Регулирование'?'law':t==='ИИ'?'ai':'';return `<article class="card ${x.featured&&i===0?'featured':''}"><div class="tags">${x.tags.map(t=>`<span class="tag ${tagClass(t)}">${esc(t)}</span>`).join('')}</div><h3><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.title)} ↗</a></h3><p class="summary">${esc(x.summary)}</p><div class="impact"><b>Почему это важно</b>${esc(x.impact)}</div><div class="footer"><span>${esc(x.date)}</span><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.source)} · источник ↗</a></div></article>`}
-    function render(){title.textContent=section==='payments'?'Платежи, рынок и регулирование':'ИИ в финансовых услугах';const list=current();grid.innerHTML=list.map(card).join('');empty.hidden=list.length>0;renderFilters();}
-    document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-section]');if(!b)return;section=b.dataset.section;filter='Все';query='';search.value='';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();});
-    filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;render();});
-    search.addEventListener('input',()=>{query=search.value.trim();render();});
-    render();
-  </script>
+  <article id="articleView" class="article-view hidden" aria-modal="true" role="dialog">
+    <div class="article-inner">
+      <div class="article-toolbar"><button id="closeArticleButton" class="icon-button" type="button" aria-label="Назад">‹</button><div class="group"><button id="favoriteArticleButton" class="icon-button" type="button" aria-label="Сохранить">☆</button><button id="shareArticleButton" class="icon-button" type="button" aria-label="Поделиться">↗</button></div></div>
+      <div id="articleContent"></div>
+    </div>
+  </article>
+
+  <script src="paydigest-data.js?v=2" defer></script>
+  <script src="paydigest.js?v=2" defer></script>
 </body>
 </html>
