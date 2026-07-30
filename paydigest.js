@@ -30,9 +30,9 @@ function renderHome(){
   document.querySelectorAll('.section-tab[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.filter));
 }
 function renderDigest(){
-  const ids=['pay-crypto-rules','pay-wallet-insurance','ai-sovereign','ai-solid-bank','ai-authority'];
+  const ids=['pay-sbp-services','pay-disclosure-law','ai-sber-threat-model','ai-federal-law','ai-authority'];
   $('#digestList').innerHTML=ids.map((id,i)=>{const x=NEWS.find(n=>n.id===id);return `<button class="digest-item" data-open="${x.id}" type="button"><span class="digest-num">${i+1}</span><span>${esc(x.title)}</span><b>›</b></button>`}).join('');
-  const tags=['#Криптовалюты','#ЭлектронныеДеньги','#ИИ','#АгентныеПлатежи','#Регулирование','#Кибербезопасность'];
+  const tags=['#СБП','#УниверсальныйQR','#ИИ','#ИИагенты','#Регулирование','#Кибербезопасность'];
   $('#trendTags').innerHTML=tags.map(t=>`<span class="trend-tag">${t}</span>`).join('');
 }
 function renderFavorites(){
