@@ -15,6 +15,13 @@ const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sectionTitle=s=>s==='payments'?'Платежи':'ИИ';
 const iconFor=item=>item.icon||'✦';
+const AI_TRENDS=[
+  {id:'ai-federal-law',title:'Регулирование ИИ переходит от принципов к обязательным правилам'},
+  {id:'ai-sber-threat-model',title:'Безопасность ИИ становится отдельным контуром управления рисками'},
+  {id:'ai-yandex-agent',title:'ИИ-агенты переходят к выполнению корпоративных операций'},
+  {id:'ai-solid-bank',title:'Банки внедряют ИИ в локальном контуре для работы с документами'},
+  {id:'ai-authority',title:'Рынок формализует полномочия и ответственность автономных агентов'}
+];
 function sectionItems(section=state.section){return NEWS.filter(x=>x.section===section)}
 function filteredItems(){return sectionItems().filter(x=>!state.filter||x.tags.includes(state.filter)||x.country===state.filter)}
 function cardMarkup(item){return `<button class="news-card ${item.section==='ai'?'ai':''}" data-open="${esc(item.id)}" type="button"><span class="news-icon">${esc(iconFor(item))}</span><span><span class="card-meta"><span class="category">${esc(item.category)}</span><span class="time"><i class="country-dot ${item.country==='Россия'?'':'world'}"></i> ${esc(item.country)}</span></span><h3>${esc(item.title)}</h3></span><span class="chevron">›</span></button>`}
@@ -30,10 +37,8 @@ function renderHome(){
   document.querySelectorAll('.section-tab[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.filter));
 }
 function renderDigest(){
-  const ids=['pay-sbp-services','pay-disclosure-law','ai-sber-threat-model','ai-federal-law','ai-authority'];
-  $('#digestList').innerHTML=ids.map((id,i)=>{const x=NEWS.find(n=>n.id===id);return `<button class="digest-item" data-open="${x.id}" type="button"><span class="digest-num">${i+1}</span><span>${esc(x.title)}</span><b>›</b></button>`}).join('');
-  const tags=['#СБП','#УниверсальныйQR','#ИИ','#ИИагенты','#Регулирование','#Кибербезопасность'];
-  $('#trendTags').innerHTML=tags.map(t=>`<span class="trend-tag">${t}</span>`).join('');
+  $('#digestList').innerHTML=AI_TRENDS.map((trend,i)=>`<button class="digest-item" data-open="${esc(trend.id)}" type="button"><span class="digest-num">${i+1}</span><span>${esc(trend.title)}</span><b>›</b></button>`).join('');
+  $('#aiNewsList').innerHTML=sectionItems('ai').map(cardMarkup).join('');
 }
 function renderFavorites(){
   const items=NEWS.filter(x=>state.favorites.has(x.id));
