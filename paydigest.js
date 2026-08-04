@@ -16,10 +16,10 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const sectionTitle=s=>s==='payments'?'Платежи':'ИИ';
 const iconFor=item=>item.icon||'✦';
 const AI_TRENDS=[
-  {id:'ai-federal-law',title:'Регулирование ИИ переходит от принципов к обязательным правилам'},
+  {id:'ai-system-assistants',title:'ИИ-помощники становятся частью системного интерфейса смартфона'},
+  {id:'ai-kandinsky-wm',title:'Physical AI получает открытые российские модели мира'},
   {id:'ai-sber-threat-model',title:'Безопасность ИИ становится отдельным контуром управления рисками'},
   {id:'ai-yandex-agent',title:'ИИ-агенты переходят к выполнению корпоративных операций'},
-  {id:'ai-solid-bank',title:'Банки внедряют ИИ в локальном контуре для работы с документами'},
   {id:'ai-authority',title:'Рынок формализует полномочия и ответственность автономных агентов'}
 ];
 function sectionItems(section=state.section){return NEWS.filter(x=>x.section===section)}
