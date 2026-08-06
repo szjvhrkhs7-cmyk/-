@@ -1,19 +1,20 @@
 const NEWS = window.PAYDIGEST_NEWS;
 if (!Array.isArray(NEWS)) throw new Error('PayDigest data unavailable');
 
-const REQUIRED_PER_SECTION=10;
+const REQUIRED_COUNTS={payments:10,ai:10,law:6};
 const MIN_RUSSIA_PER_SECTION=6;
-const sectionCounts={payments:NEWS.filter(x=>x.section==='payments').length,ai:NEWS.filter(x=>x.section==='ai').length};
+const sectionCounts=Object.fromEntries(Object.keys(REQUIRED_COUNTS).map(section=>[section,NEWS.filter(x=>x.section===section).length]));
 const russianCounts={payments:NEWS.filter(x=>x.section==='payments'&&x.country==='Россия').length,ai:NEWS.filter(x=>x.section==='ai'&&x.country==='Россия').length};
-if(NEWS.length!==20||sectionCounts.payments!==REQUIRED_PER_SECTION||sectionCounts.ai!==REQUIRED_PER_SECTION||russianCounts.payments<MIN_RUSSIA_PER_SECTION||russianCounts.ai<MIN_RUSSIA_PER_SECTION){
-  document.body.innerHTML='<main style="max-width:540px;margin:50px auto;color:white;font:16px system-ui"><h1>Редакционная ошибка</h1><p>В каждом разделе должно быть ровно 10 новостей и минимум 6 российских материалов.</p></main>';
+const hasInvalidSection=Object.entries(REQUIRED_COUNTS).some(([section,count])=>sectionCounts[section]!==count);
+if(NEWS.length!==26||hasInvalidSection||russianCounts.payments<MIN_RUSSIA_PER_SECTION||russianCounts.ai<MIN_RUSSIA_PER_SECTION){
+  document.body.innerHTML='<main style="max-width:540px;margin:50px auto;color:white;font:16px system-ui"><h1>Редакционная ошибка</h1><p>Нарушены требования к составу выпуска PayDigest.</p></main>';
   throw new Error('PayDigest editorial policy violation');
 }
 
 const state={section:'payments',filter:null,screen:'home',articleId:null,favorites:new Set(JSON.parse(localStorage.getItem('paydigest-favorites')||'[]'))};
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const sectionTitle=s=>s==='payments'?'Платежи':'ИИ';
+const sectionTitle=s=>({payments:'Платежи',ai:'ИИ',law:'Право'}[s]||s);
 const iconFor=item=>item.icon||'✦';
 const AI_TRENDS=[
   {id:'ai-system-assistants',title:'ИИ-помощники становятся частью системного интерфейса смартфона'},
@@ -24,7 +25,7 @@ const AI_TRENDS=[
 ];
 function sectionItems(section=state.section){return NEWS.filter(x=>x.section===section)}
 function filteredItems(){return sectionItems().filter(x=>!state.filter||x.tags.includes(state.filter)||x.country===state.filter)}
-function cardMarkup(item){return `<button class="news-card ${item.section==='ai'?'ai':''}" data-open="${esc(item.id)}" type="button"><span class="news-icon">${esc(iconFor(item))}</span><span><span class="card-meta"><span class="category">${esc(item.category)}</span><span class="time"><i class="country-dot ${item.country==='Россия'?'':'world'}"></i> ${esc(item.country)}</span></span><h3>${esc(item.title)}</h3></span><span class="chevron">›</span></button>`}
+function cardMarkup(item){return `<button class="news-card ${esc(item.section)}" data-open="${esc(item.id)}" type="button"><span class="news-icon">${esc(iconFor(item))}</span><span><span class="card-meta"><span class="category">${esc(item.category)}</span><span class="time"><i class="country-dot ${item.country==='Россия'?'':'world'}"></i> ${esc(item.country)}</span></span><h3>${esc(item.title)}</h3></span><span class="chevron">›</span></button>`}
 function featuredMarkup(item){return `<div class="featured-top"><span class="category">${esc(item.category)}</span><span class="time">${esc(item.date)}</span></div><h1>${esc(item.title)}</h1><p>${esc(item.summary)}</p><div class="spark" aria-hidden="true"><svg viewBox="0 0 360 90" preserveAspectRatio="none"><path class="gridline" d="M0 22H360M0 45H360M0 68H360"/><path class="line-a" d="M0 67 L36 48 L72 29 L108 55 L144 69 L180 58 L216 73 L252 69 L288 48 L324 43 L360 31"/><path class="line-b" d="M0 72 L36 64 L72 70 L108 62 L144 61 L180 58 L216 52 L252 49 L288 32 L324 23 L360 17"/></svg></div><button class="featured-open" data-open="${esc(item.id)}" type="button" aria-label="Открыть новость">→</button>`}
 function renderHome(){
   const pool=filteredItems();
@@ -40,6 +41,9 @@ function renderDigest(){
   $('#digestList').innerHTML=AI_TRENDS.map((trend,i)=>`<button class="digest-item" data-open="${esc(trend.id)}" type="button"><span class="digest-num">${i+1}</span><span>${esc(trend.title)}</span><b>›</b></button>`).join('');
   $('#aiNewsList').innerHTML=sectionItems('ai').map(cardMarkup).join('');
 }
+function renderLaw(){
+  $('#lawNewsList').innerHTML=sectionItems('law').map(cardMarkup).join('');
+}
 function renderFavorites(){
   const items=NEWS.filter(x=>state.favorites.has(x.id));
   $('#favoritesCount').textContent=`${items.length} материалов`;
@@ -47,7 +51,7 @@ function renderFavorites(){
 }
 function switchScreen(name){
   state.screen=name;
-  ['home','digest','favorites','profile'].forEach(n=>$(`#${n}Screen`).classList.toggle('hidden',n!==name));
+  ['home','digest','law','favorites','profile'].forEach(n=>$(`#${n}Screen`).classList.toggle('hidden',n!==name));
   document.querySelectorAll('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));
   if(name==='favorites')renderFavorites();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -76,4 +80,4 @@ $('#closeArticleButton').addEventListener('click',closeArticle);
 $('#favoriteArticleButton').addEventListener('click',toggleFavorite);
 $('#shareArticleButton').addEventListener('click',async()=>{const x=NEWS.find(n=>n.id===state.articleId);if(!x)return;try{if(navigator.share)await navigator.share({title:x.title,text:x.summary,url:x.url});else await navigator.clipboard.writeText(x.url)}catch{}});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#articleView').classList.contains('hidden'))closeArticle();else $('#searchPanel').classList.add('hidden')}});
-renderHome();renderDigest();renderFavorites();
+renderHome();renderDigest();renderLaw();renderFavorites();
