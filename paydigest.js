@@ -21,9 +21,11 @@ const AI_TRENDS=[
   {id:'ai-kandinsky-wm',title:'Physical AI получает открытые российские модели мира'},
   {id:'ai-sber-threat-model',title:'Безопасность ИИ становится отдельным контуром управления рисками'},
   {id:'ai-yandex-agent',title:'ИИ-агенты переходят к выполнению корпоративных операций'},
-  {id:'ai-authority',title:'Рынок формализует полномочия и ответственность автономных агентов'}
+  {id:'ai-financial-risk',title:'Финансирование ИИ-инфраструктуры становится вопросом финансовой стабильности'}
 ];
-function sectionItems(section=state.section){return NEWS.filter(x=>x.section===section)}
+const RUSSIAN_MONTHS={января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
+function dateValue(value){const match=String(value).match(/^(\d{1,2})\s+([а-яё]+)\s+(\d{4})$/i);return match?Date.UTC(Number(match[3]),RUSSIAN_MONTHS[match[2].toLowerCase()],Number(match[1])):0}
+function sectionItems(section=state.section){const items=NEWS.filter(x=>x.section===section);return section==='law'?items:items.sort((a,b)=>dateValue(b.date)-dateValue(a.date))}
 function filteredItems(){return sectionItems().filter(x=>!state.filter||x.tags.includes(state.filter)||x.country===state.filter)}
 function cardMarkup(item){return `<button class="news-card ${esc(item.section)}" data-open="${esc(item.id)}" type="button"><span class="news-icon">${esc(iconFor(item))}</span><span><span class="card-meta"><span class="category">${esc(item.category)}</span><span class="time"><i class="country-dot ${item.country==='Россия'?'':'world'}"></i> ${esc(item.country)}</span></span><h3>${esc(item.title)}</h3></span><span class="chevron">›</span></button>`}
 function featuredMarkup(item){return `<div class="featured-top"><span class="category">${esc(item.category)}</span><span class="time">${esc(item.date)}</span></div><h1>${esc(item.title)}</h1><p>${esc(item.summary)}</p><div class="spark" aria-hidden="true"><svg viewBox="0 0 360 90" preserveAspectRatio="none"><path class="gridline" d="M0 22H360M0 45H360M0 68H360"/><path class="line-a" d="M0 67 L36 48 L72 29 L108 55 L144 69 L180 58 L216 73 L252 69 L288 48 L324 43 L360 31"/><path class="line-b" d="M0 72 L36 64 L72 70 L108 62 L144 61 L180 58 L216 52 L252 49 L288 32 L324 23 L360 17"/></svg></div><button class="featured-open" data-open="${esc(item.id)}" type="button" aria-label="Открыть новость">→</button>`}
