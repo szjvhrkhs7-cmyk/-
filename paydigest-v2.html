@@ -10,9 +10,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PayDigest">
-  <meta name="description" content="PayDigest — 10 новостей о платежах и 10 новостей об ИИ с приоритетом российского рынка">
-  <title>PayDigest — платежи и ИИ</title>
-  <link rel="stylesheet" href="paydigest.css?v=20260804-1">
+  <meta name="description" content="PayDigest — новости платежей и ИИ, а также научные правовые статьи о платежных услугах">
+  <title>PayDigest — платежи, ИИ и право</title>
+  <link rel="stylesheet" href="paydigest.css?v=20260806-1">
 </head>
 <body>
   <div class="app-shell">
@@ -24,41 +24,48 @@
       <section id="homeScreen" class="screen">
         <div id="sectionTabs" class="section-tabs" aria-label="Разделы новостей">
           <button class="section-tab active" data-section="payments" type="button">Платежи</button>
-          <button class="section-tab" data-section="ai" type="button">ИИ</button>
           <button class="section-tab" data-filter="Регулирование" type="button">Регулирование</button>
         </div>
-        <div class="section-kicker"><span id="sectionLabel"><b>Платежи</b> · 10 материалов</span><span>4 августа 2026</span></div>
+        <div class="section-kicker"><span id="sectionLabel"><b>Платежи</b> · 10 материалов</span><span>6 августа 2026</span></div>
         <article id="featuredCard" class="featured"></article>
         <div class="list-header"><h2>Новости для вас</h2><span id="sectionCount" class="count-badge">10 новостей</span></div>
         <div id="newsList" class="news-list"></div>
       </section>
       <section id="digestScreen" class="screen hidden">
-        <div class="section-kicker"><span><b>ИИ</b> · 10 материалов</span><span>4 августа 2026</span></div>
+        <div class="section-kicker"><span><b>ИИ</b> · 10 материалов</span><span>6 августа 2026</span></div>
         <h1 class="digest-title">Главное в ИИ</h1>
         <div class="digest-hero"><span class="label">✦ Краткий дайджест</span><h2>Пять основных трендов</h2><p>Что меняется в регулировании, безопасности и практическом применении ИИ в банках и бизнесе.</p><div id="digestList" class="digest-list"></div></div>
         <div class="list-header"><h2>Новости ИИ</h2><span class="count-badge">10 новостей</span></div>
         <div id="aiNewsList" class="news-list"></div>
       </section>
+      <section id="lawScreen" class="screen hidden">
+        <div class="section-kicker"><span><b>Право</b> · 6 научных статей</span><span>2024–2026</span></div>
+        <h1 class="digest-title">Право платежей</h1>
+        <div class="law-intro"><span class="label">⚖ Научная подборка</span><h2>Правовое регулирование платежных услуг</h2><p>Статьи из профильных юридических журналов о платежных системах, расчетах, платежных посредниках и защите участников рынка. Темы цифрового рубля и антифрода исключены.</p></div>
+        <div class="list-header"><h2>Новые публикации</h2><span class="count-badge">6 статей</span></div>
+        <div id="lawNewsList" class="news-list"></div>
+      </section>
       <section id="favoritesScreen" class="screen hidden"><div class="section-kicker"><span><b>Сохранённое</b></span><span id="favoritesCount">0 материалов</span></div><h1 class="profile-title">Избранное</h1><div id="favoritesList" class="news-list" style="margin-top:16px"></div></section>
       <section id="profileScreen" class="screen hidden">
         <div class="section-kicker"><span><b>О приложении</b></span><span>PayDigest 2.0</span></div>
         <h1 class="profile-title">Редакционный профиль</h1>
-        <div class="stat-grid"><div class="stat"><strong>20</strong><span>материалов всего</span></div><div class="stat"><strong>10 + 10</strong><span>платежи и ИИ</span></div></div>
-        <div class="profile-card"><h3>Правила выпуска</h3><ul><li>Ровно 10 материалов в разделе «Платежи».</li><li>Ровно 10 материалов в разделе «ИИ».</li><li>Не менее 6 российских материалов в каждом разделе.</li><li>Российское право и позиции Банка России имеют приоритет.</li><li>Международные кейсы включаются при наличии практического вывода для России.</li></ul></div>
-        <div class="profile-card"><h3>Источники</h3><p>Банк России, российские отраслевые издания, официальные сообщения участников рынка и проверенные международные финтех-медиа.</p></div>
+        <div class="stat-grid"><div class="stat"><strong>26</strong><span>материалов всего</span></div><div class="stat"><strong>10 + 10 + 6</strong><span>платежи, ИИ и право</span></div></div>
+        <div class="profile-card"><h3>Правила выпуска</h3><ul><li>По 10 материалов в разделах «Платежи» и «ИИ».</li><li>Не менее 6 российских материалов в каждом новостном разделе.</li><li>В разделе «Право» — профильные научные статьи не старше трёх лет.</li><li>Темы цифрового рубля и антифрода в правовую подборку не включаются.</li><li>Российское право и позиции Банка России имеют приоритет.</li></ul></div>
+        <div class="profile-card"><h3>Источники</h3><p>Банк России, российские отраслевые издания, официальные сообщения участников рынка, проверенные международные финтех-медиа и профильные юридические журналы.</p></div>
       </section>
       <footer class="project-signature">проект В.Ю. Марченко</footer>
     </main>
     <nav id="bottomNav" class="bottom-nav" aria-label="Основная навигация">
       <button class="nav-button active" data-screen="home" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10H7v-7h10v7"></path></svg><span>Главная</span></button>
       <button class="nav-button" data-screen="digest" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 2 1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2Z"></path><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"></path></svg><span>ИИ</span></button>
+      <button class="nav-button" data-screen="law" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 6h14M7 6l-4 8h8L7 6Zm10 0-4 8h8l-4-8ZM7 21h10"></path></svg><span>Право</span></button>
       <button class="nav-button" data-screen="favorites" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Избранное</span></button>
       <button class="nav-button" data-screen="profile" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path></svg><span>Профиль</span></button>
     </nav>
   </div>
-  <section id="searchPanel" class="search-panel hidden" aria-label="Поиск по новостям"><div class="search-row"><input id="searchInput" class="search-input" type="search" placeholder="Поиск по 20 материалам" autocomplete="off"><button id="closeSearchButton" class="icon-button" type="button" aria-label="Закрыть">×</button></div><div id="searchResults" class="search-results"></div></section>
+  <section id="searchPanel" class="search-panel hidden" aria-label="Поиск по материалам"><div class="search-row"><input id="searchInput" class="search-input" type="search" placeholder="Поиск по 26 материалам" autocomplete="off"><button id="closeSearchButton" class="icon-button" type="button" aria-label="Закрыть">×</button></div><div id="searchResults" class="search-results"></div></section>
   <article id="articleView" class="article-view hidden" aria-modal="true" role="dialog"><div class="article-inner"><div class="article-toolbar"><button id="closeArticleButton" class="icon-button" type="button" aria-label="Назад">‹</button><div class="group"><button id="favoriteArticleButton" class="icon-button" type="button" aria-label="Сохранить">☆</button><button id="shareArticleButton" class="icon-button" type="button" aria-label="Поделиться">↗</button></div></div><div id="articleContent"></div></div></article>
-  <script src="paydigest-data.js?v=20260804-1" defer></script>
-  <script src="paydigest.js?v=20260804-1" defer></script>
+  <script src="paydigest-data.js?v=20260806-1" defer></script>
+  <script src="paydigest.js?v=20260806-1" defer></script>
 </body>
 </html>
