@@ -17,11 +17,26 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const sectionTitle=s=>({payments:'Платежи',ai:'ИИ',law:'Право'}[s]||s);
 const iconFor=item=>item.icon||'✦';
 const AI_TRENDS=[
-  {id:'ai-system-assistants',title:'ИИ-помощники становятся частью системного интерфейса смартфона'},
-  {id:'ai-kandinsky-wm',title:'Physical AI получает открытые российские модели мира'},
-  {id:'ai-sber-threat-model',title:'Безопасность ИИ становится отдельным контуром управления рисками'},
-  {id:'ai-yandex-agent',title:'ИИ-агенты переходят к выполнению корпоративных операций'},
-  {id:'ai-financial-risk',title:'Финансирование ИИ-инфраструктуры становится вопросом финансовой стабильности'}
+  {
+    "id": "ai-rshb-digest-3",
+    "title": "ИИ в России переходит от пилотов к измеримым отраслевым результатам"
+  },
+  {
+    "id": "ai-smart-engines",
+    "title": "Локальное распознавание документов становится зрелым массовым сценарием"
+  },
+  {
+    "id": "ai-meta-muse",
+    "title": "Компактные открытые модели переносят агентов на локальные устройства"
+  },
+  {
+    "id": "ai-data-readiness",
+    "title": "Качество данных становится главным ограничением корпоративного ИИ"
+  },
+  {
+    "id": "ai-sber-threat-model",
+    "title": "Безопасность ИИ выделяется в самостоятельный контур управления рисками"
+  }
 ];
 const RUSSIAN_MONTHS={января:0,февраля:1,марта:2,апреля:3,мая:4,июня:5,июля:6,августа:7,сентября:8,октября:9,ноября:10,декабря:11};
 function dateValue(value){const match=String(value).match(/^(\d{1,2})\s+([а-яё]+)\s+(\d{4})$/i);return match?Date.UTC(Number(match[3]),RUSSIAN_MONTHS[match[2].toLowerCase()],Number(match[1])):0}
