@@ -244,8 +244,8 @@ window.PAYDIGEST_NEWS = [
     "id": "ai-bank-vendor-concentration",
     "section": "ai",
     "country": "Мир",
-    "date": "15 августа 2026",
-    "source": "PLUSworld",
+    "date": "9 августа 2026",
+    "source": "The Guardian",
     "category": "Риски банков",
     "icon": "△",
     "title": "Банки сталкиваются с риском концентрации поставщиков ИИ",
@@ -262,15 +262,15 @@ window.PAYDIGEST_NEWS = [
       "Банки",
       "Риск поставщика"
     ],
-    "url": "https://plusworld.ru/articles/73688/",
+    "url": "https://www.theguardian.com/business/2026/aug/09/ai-push-banks-tech-firms-moodys-risks-financial-sector",
     "featured": true
   },
   {
     "id": "ai-rbi-governance",
     "section": "ai",
     "country": "Индия",
-    "date": "15 августа 2026",
-    "source": "PLUSworld",
+    "date": "11 августа 2026",
+    "source": "The Times of India",
     "category": "Управление ИИ",
     "icon": "§",
     "title": "Индийский регулятор призвал банки взять использование ИИ под контроль",
@@ -287,7 +287,7 @@ window.PAYDIGEST_NEWS = [
       "Банки",
       "Управление моделями"
     ],
-    "url": "https://plusworld.ru/articles/73686/"
+    "url": "https://timesofindia.indiatimes.com/business/india-business/rbi-guv-asks-banks-to-build-meaningful-human-oversight-says-blaming-technology-unacceptable/articleshow/133152322.cms"
   },
   {
     "id": "ai-chinese-models-russia",
